@@ -71,11 +71,11 @@ const DetailsSection = () => {
                     type="number"
                     min={1}
                     className="border rounded w-full py-1 px-2 font-normal"
-                    {...register("price", { required: "This field is required." })}
+                    {...register("pricePerNight", { required: "This field is required." })}
                 ></input>
-                {errors.price && (
+                {errors.pricePerNight && (
                     <span className="text-red-500">
-                        {errors.price.message}
+                        {errors.pricePerNight.message}
                     </span>
                 )}
             </label>
@@ -85,16 +85,17 @@ const DetailsSection = () => {
                 <select {...register("starRating", {
                     required: "This field is required.",
                 })}
-                className="border rounded w-full p-2 text-gray-700 font-normal"
+                    className="border rounded w-full p-2 text-gray-700 font-normal"
                 >
                     <option value="1" className="text-sm font-bold">
                         Select as Rating
                     </option>
                     {[1, 2, 3, 4, 5].map((num) => (
-                        <option value={num}>
+                        <option key={num} value={num}>
                             {num}
                         </option>
                     ))}
+
                 </select>
                 {errors.starRating && (
                     <span className="text-red-500">

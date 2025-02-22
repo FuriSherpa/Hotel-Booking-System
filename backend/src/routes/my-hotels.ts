@@ -59,7 +59,7 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
     }
 });
 
-async function uploadImages(imageFiles:Express.Multer.File[]) {
+async function uploadImages(imageFiles: Express.Multer.File[]) {
     // upload image to cloudinary
     const uploadPromises = imageFiles.map(async (image) => {
         const b64 = Buffer.from(image.buffer).toString("base64");

@@ -15,24 +15,24 @@ export type RegisterFormData = {
 const Register = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const {showToast} = useAppContext();
+    const { showToast } = useAppContext();
     const { register, watch, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
 
     const mutation = useMutation(apiClient.register, {
         onSuccess: async () => {
-            showToast({message: "SignUp Success", type: 'success'});
+            showToast({ message: "SignUp Success", type: 'success' });
             await queryClient.invalidateQueries("validateToken")
             navigate('/');
         },
         onError: (error: Error) => {
-            showToast({message: error.message, type:'error'});
+            showToast({ message: error.message, type: 'error' });
         }
     })
 
     const onSubmit = handleSubmit((data) => {
         mutation.mutate(data);
     });
-    
+
     return (
         <form className="flex flex-col gap-5" onSubmit={onSubmit}>
             <h2 className="text-3xl font-bold">
