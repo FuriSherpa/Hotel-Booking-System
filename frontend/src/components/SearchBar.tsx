@@ -8,11 +8,28 @@ import { useNavigate } from "react-router-dom";
 const SearchBar = () => {
     const navigate = useNavigate();
     const search = useSearchContext();
-    const [destination, setDestination] = useState<string>(search.destination);
-    const [checkIn, setCheckIn] = useState<Date>(search.checkIn);
-    const [checkOut, setCheckOut] = useState<Date>(search.checkOut);
-    const [adultCount, setAdultCount] = useState<number>(search.adultCount);
-    const [childCount, setChildCount] = useState<number>(search.childCount);
+
+    // Define default values from the search context.
+    const defaultDestination = search.destination;
+    const defaultCheckIn = search.checkIn;
+    const defaultCheckOut = search.checkOut;
+    const defaultAdultCount = search.adultCount;
+    const defaultChildCount = search.childCount;
+
+    // Local state initialized with context values.
+    const [destination, setDestination] = useState<string>(defaultDestination);
+    const [checkIn, setCheckIn] = useState<Date>(defaultCheckIn);
+    const [checkOut, setCheckOut] = useState<Date>(defaultCheckOut);
+    const [adultCount, setAdultCount] = useState<number>(defaultAdultCount);
+    const [childCount, setChildCount] = useState<number>(defaultChildCount);
+
+    // The form is considered "empty" if all fields are at their default values.
+    const isFormEmpty =
+        destination === "" &&
+        checkIn.getTime() === defaultCheckIn.getTime() &&
+        checkOut.getTime() === defaultCheckOut.getTime() &&
+        adultCount === 1 &&
+        childCount === 0;
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
@@ -20,9 +37,26 @@ const SearchBar = () => {
         navigate("/search");
     };
 
+    const handleClear = () => {
+        // Only clear if at least one field is not default.
+        if (isFormEmpty) return;
+
+        // Reset to default values
+        setDestination("");
+        setCheckIn(new Date());
+        setCheckOut(new Date());
+        setAdultCount(1);
+        setChildCount(0);
+
+        // Optionally update the search context to reflect these default values.
+        search.saveSearchValues("", new Date(), new Date(), 1, 0, "");
+        // Optionally navigate to the default list view.
+        navigate("/search");
+    };
+
     const minDate = new Date();
     const maxDate = new Date();
-    maxDate.setDate(maxDate.getFullYear() + 1);
+    maxDate.setFullYear(maxDate.getFullYear() + 1);
 
     return (
         <form
@@ -94,10 +128,17 @@ const SearchBar = () => {
             </div>
 
             <div className="flex gap-1">
-                <button className="w-2/3 bg-blue-600 text-white h-full p-1.5 font-bold text-xl hover:bg-blue-500 rounded cursor-pointer">
+                <button
+                    type="submit"
+                    className="w-2/3 bg-blue-600 text-white h-full p-1.5 font-bold text-xl hover:bg-blue-500 rounded cursor-pointer">
                     Search
                 </button>
-                <button className="w-1/3 bg-red-600 text-white h-full p-1.5 font-bold text-xl hover:bg-red-500 rounded cursor-pointer">
+                <button
+                    type="button"
+                    disabled={isFormEmpty}
+                    onClick={handleClear}
+                    className={`w-1/3 bg-red-600 text-white h-full p-1.5 font-bold text-xl rounded cursor-pointer ${isFormEmpty ? "opacity-50 cursor-not-allowed" : "hover:bg-red-500"
+                        }`}>
                     Clear
                 </button>
             </div>
