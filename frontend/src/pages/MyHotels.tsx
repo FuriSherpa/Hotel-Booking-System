@@ -7,7 +7,7 @@ import { BiHotel, BiMoney, BiStar } from "react-icons/bi"
 const MyHotels = () => {
     const { data: hotelData } = useQuery(
         "fetchMyHotels",
-        apiClient.fetchMyHotel,
+        apiClient.fetchMyHotels,
         {
             onError: () => { },
         }

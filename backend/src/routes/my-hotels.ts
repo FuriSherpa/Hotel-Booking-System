@@ -31,7 +31,7 @@ router.post(
     body("facilities")
       .notEmpty()
       .isArray()
-      .withMessage("Facitlies is required."),
+      .withMessage("Facilities is required."),
   ],
   upload.array("imageFiles", 6),
   async (req: Request, res: Response) => {
