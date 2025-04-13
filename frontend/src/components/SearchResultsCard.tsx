@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { HotelType } from "../../../backend/src/shared/types";
 import { AiFillStar } from "react-icons/ai";
+import WishlistButton from "./WishlistButton";
+
 type Props = {
     hotel: HotelType;
 };
@@ -16,7 +18,8 @@ const SearchResultsCard = ({ hotel }: Props) => {
             </div>
             <div className="grid grid-rows-[1fr_2fr_1fr]">
                 <div>
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-2">
+                        <WishlistButton hotelId={hotel._id} />
                         <span className="flex">
                             {Array.from({ length: hotel.starRating }).map(() => (
                                 <AiFillStar className="fill-yellow-400" />
