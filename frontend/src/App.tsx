@@ -16,9 +16,14 @@ import Detail from "./pages/Detail";
 import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import Home from "./pages/Home";
+import AdminDashboard from "./pages/AdminDashboard";
+import Wishlist from "./pages/Wishlist";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import Profile from "./pages/Profile";
+import ChangePassword from "./pages/ChangePassword";
 
 const App = () => {
-  const { isLoggedIn } = useAppContext();
+  const { isLoggedIn, userRole } = useAppContext();
   return (
     <Router>
       <Routes>
@@ -93,7 +98,49 @@ const App = () => {
               <MyBookings />
             </Layout>
           } />
+
+          <Route
+            path="/wishlist"
+            element={
+              <Layout>
+                <Wishlist />
+              </Layout>
+            }
+          />
+
+          <Route path="/profile" element={
+            <Layout>
+              <Profile />
+            </Layout>
+          } />
+
+          <Route path="/change-password" element={
+            <Layout>
+              <ChangePassword />
+            </Layout>
+          } />
         </>}
+
+        {isLoggedIn && userRole === "admin" && (
+          <Route
+            path="/admin/dashboard"
+            element={
+              <Layout>
+                <AdminDashboard />
+              </Layout>
+            }
+          />
+        )}
+
+        <Route
+          path="/payment-success"
+          element={
+            <Layout>
+              <PaymentSuccess />
+            </Layout>
+          }
+        />
+
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router >
