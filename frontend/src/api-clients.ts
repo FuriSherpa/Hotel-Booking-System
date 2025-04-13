@@ -5,6 +5,8 @@ import {
   HotelType,
   PaymentIntentResponse,
   UserType,
+  AnalyticsData,
+  BookingType,
 } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
@@ -233,6 +235,8 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   if (!response.ok) {
     throw new Error("Error booking room");
   }
+
+  return response.json();
 };
 
 export const fetchMyBookings = async (): Promise<HotelType[]> => {
@@ -242,6 +246,158 @@ export const fetchMyBookings = async (): Promise<HotelType[]> => {
 
   if (!response.ok) {
     throw new Error("Unable to fetch bookings");
+  }
+
+  return response.json();
+};
+
+export const submitReview = async (
+  hotelId: string,
+  reviewData: { rating: number; comment: string }
+) => {
+  const response = await fetch(`${API_BASE_URL}/api/reviews/${hotelId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(reviewData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to submit review");
+  }
+
+  return response.json();
+};
+
+export const addToWishlist = async (hotelId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/wishlist/${hotelId}`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add to wishlist");
+  }
+
+  return response.json();
+};
+
+export const removeFromWishlist = async (hotelId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/wishlist/${hotelId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to remove from wishlist");
+  }
+
+  return response.json();
+};
+
+export const fetchWishlist = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/wishlist`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch wishlist");
+  }
+
+  return response.json();
+};
+
+interface AnalyticsParams {
+  startDate: Date;
+  endDate: Date;
+}
+
+export const fetchAnalytics = async (
+  params: AnalyticsParams
+): Promise<AnalyticsData> => {
+  const queryParams = new URLSearchParams({
+    startDate: params.startDate.toISOString(),
+    endDate: params.endDate.toISOString(),
+  });
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/analytics?${queryParams}`,
+    {
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch analytics");
+  }
+
+  return response.json();
+};
+
+export const cancelBooking = async (
+  hotelId: string,
+  bookingId: string,
+  cancellationReason: string
+): Promise<{ message: string; booking: BookingType }> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/hotels/${hotelId}/bookings/${bookingId}/cancel`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ cancellationReason }),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to cancel booking");
+  }
+
+  return response.json();
+};
+
+export const updateProfile = async (formData: {
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+}) => {
+  const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update profile");
+  }
+
+  return response.json();
+};
+
+export const changePassword = async (formData: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  const response = await fetch(`${API_BASE_URL}/api/users/password`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to change password");
   }
 
   return response.json();
