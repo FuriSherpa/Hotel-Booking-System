@@ -166,7 +166,8 @@ router.post(
         { _id: req.params.hotelId },
         {
           $push: { bookings: newBooking },
-        }
+        },
+        { new: true }
       );
 
       if (!hotel) {
@@ -175,7 +176,10 @@ router.post(
       }
 
       await hotel.save();
-      res.status(200).send();
+      res.status(200).json({
+        booking: newBooking,
+        hotel: hotel,
+      });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "something went wrong" });

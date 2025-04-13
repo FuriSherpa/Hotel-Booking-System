@@ -6,7 +6,7 @@ import {
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement } from "@stripe/stripe-js";
 import { useSearchContext } from "../../context/SearchContext";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import * as apiClient from "../../api-clients";
 import { useAppContext } from "../../context/AppContext";
@@ -32,6 +32,7 @@ export type BookingFormData = {
 const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
 
     const search = useSearchContext();
     const { hotelId } = useParams();
@@ -41,8 +42,14 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     const { mutate: bookRoom, isLoading } = useMutation(
         apiClient.createRoomBooking,
         {
-            onSuccess: () => {
+            onSuccess: (data) => {
                 showToast({ message: "Booking Saved!", type: "success" });
+                navigate('/payment-success', {
+                    state: {
+                        booking: data.booking,
+                        hotel: data.hotel
+                    }
+                });
             },
             onError: () => {
                 showToast({ message: "Error saving booking", type: "error" });
