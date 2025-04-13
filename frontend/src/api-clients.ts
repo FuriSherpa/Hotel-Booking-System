@@ -180,7 +180,9 @@ export const searchHotels = async (
 };
 
 export const fetchHotels = async (): Promise<HotelType[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/hotels`);
+  const response = await fetch(`${API_BASE_URL}/api/hotels`, {
+    credentials: "include", // Add this to include auth cookies
+  });
   if (!response.ok) {
     throw new Error("Error fetching hotels");
   }
@@ -398,6 +400,18 @@ export const changePassword = async (formData: {
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || "Failed to change password");
+  }
+
+  return response.json();
+};
+
+export const fetchAllBookings = async (): Promise<HotelType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/admin/bookings`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Error fetching bookings");
   }
 
   return response.json();

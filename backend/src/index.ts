@@ -12,6 +12,7 @@ import bookingRoutes from "./routes/my-bookings";
 import adminRoutes from "./routes/admin";
 import reviewRoutes from "./routes/reviews";
 import wishlistRoutes from "./routes/wishlist";
+import adminBookingsRoutes from "./routes/admin-bookings";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -40,6 +41,7 @@ app.use("/api/hotels", hotelRoutes);
 app.use("/api/my-bookings", bookingRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/admin/bookings", adminBookingsRoutes);
 
 app.listen(7000, () => {
   console.log("Server running on localhost 7000");

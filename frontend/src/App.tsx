@@ -17,6 +17,7 @@ import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import Home from "./pages/Home";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminBookings from "./pages/AdminBooking";
 import Wishlist from "./pages/Wishlist";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Profile from "./pages/Profile";
@@ -122,14 +123,24 @@ const App = () => {
         </>}
 
         {isLoggedIn && userRole === "admin" && (
-          <Route
-            path="/admin/dashboard"
-            element={
-              <Layout>
-                <AdminDashboard />
-              </Layout>
-            }
-          />
+          <>
+            <Route
+              path="/admin/dashboard"
+              element={
+                <Layout>
+                  <AdminDashboard />
+                </Layout>
+              }
+            />
+            <Route
+              path="/admin/bookings"
+              element={
+                <Layout>
+                  <AdminBookings />
+                </Layout>
+              }
+            />
+          </>
         )}
 
         <Route

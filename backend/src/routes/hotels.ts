@@ -1,6 +1,10 @@
 import express, { Request, Response } from "express";
 import Hotel from "../models/hotel";
-import { BookingType, HotelSearchResponse } from "../shared/types";
+import {
+  BookingType,
+  HotelSearchResponse,
+  BookingStatus,
+} from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
@@ -160,6 +164,7 @@ router.post(
       const newBooking: BookingType = {
         ...req.body,
         userId: req.userId,
+        status: BookingStatus.CONFIRMED,
       };
 
       const hotel = await Hotel.findOneAndUpdate(

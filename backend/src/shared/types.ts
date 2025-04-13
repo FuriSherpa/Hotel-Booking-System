@@ -40,9 +40,9 @@ export type BookingType = {
   checkIn: Date;
   checkOut: Date;
   totalCost: number;
-  paymentIntentId: string; // Add this
-  status: BookingStatus; // Add this
-  cancellationReason?: string; // Optional cancellation reason
+  status: BookingStatus;
+  paymentIntentId: string;
+  cancellationReason?: string;
 };
 
 export enum BookingStatus {

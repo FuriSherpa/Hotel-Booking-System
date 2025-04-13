@@ -19,19 +19,25 @@ const Header = () => {
         <nav className='flex items-center space-x-4'>
           {isLoggedIn ? (
             <>
-              <Link
-                className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50]'
-                to="/my-bookings"
-              >
-                My Bookings
-              </Link>
 
-              <Link
-                className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50]'
-                to="/wishlist"
-              >
-                My Wishlist
-              </Link>
+              {userRole !== 'admin' && (
+                <Link
+                  className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50]'
+                  to="/my-bookings"
+                >
+                  My Bookings
+                </Link>
+              )}
+
+              {/* Only show wishlist for non-admin users */}
+              {userRole !== 'admin' && (
+                <Link
+                  className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50]'
+                  to="/wishlist"
+                >
+                  My Wishlist
+                </Link>
+              )}
 
               <ProfileMenu />
 
@@ -41,13 +47,19 @@ const Header = () => {
                     className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50]'
                     to="/admin/dashboard"
                   >
-                    Admin Dashboard
+                    Dashboard
+                  </Link>
+                  <Link
+                    className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50]'
+                    to="/admin/bookings"
+                  >
+                    Bookings
                   </Link>
                   <Link
                     className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50]'
                     to="/my-hotels"
                   >
-                    Manage Hotels
+                    Hotels
                   </Link>
                 </>
               )}

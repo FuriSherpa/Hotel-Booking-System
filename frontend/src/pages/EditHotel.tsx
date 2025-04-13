@@ -15,10 +15,10 @@ const EditHotel = () => {
     );
 
     const { mutate, isLoading } = useMutation(apiClient.updateMyHotelById, {
-        onSuccess: () => { 
+        onSuccess: () => {
             showToast({ message: "Hotel Updated!", type: "success" });
         },
-        onError: () => { 
+        onError: () => {
             showToast({ message: "Error Updating Hotel", type: "error" });
         },
     });
