@@ -4,6 +4,10 @@ export type UserType = {
   password: string;
   firstName: string;
   lastName: string;
+  phoneNumber?: string;
+  profilePicture?: string;
+  role: "admin" | "customer";
+  wishlist: string[];
 };
 
 export type HotelType = {
@@ -21,6 +25,8 @@ export type HotelType = {
   imageUrls: string[];
   lastUpdated: Date;
   bookings: BookingType[];
+  reviews: ReviewType[];
+  averageRating: number;
 };
 
 export type BookingType = {
@@ -34,7 +40,18 @@ export type BookingType = {
   checkIn: Date;
   checkOut: Date;
   totalCost: number;
+  paymentIntentId: string; // Add this
+  status: BookingStatus; // Add this
+  cancellationReason?: string; // Optional cancellation reason
 };
+
+export enum BookingStatus {
+  CONFIRMED = "CONFIRMED",
+  CANCELLED = "CANCELLED",
+  REFUNDED = "REFUNDED",
+  REFUND_FAILED = "REFUND_FAILED",
+  REFUND_PENDING = "REFUND_PENDING",
+}
 
 export type HotelSearchResponse = {
   data: HotelType[];
@@ -50,3 +67,28 @@ export type PaymentIntentResponse = {
   clientSecret: string;
   totalCost: number;
 };
+
+export type ReviewType = {
+  _id: string;
+  userId: string;
+  rating: number; // 1-5 stars
+  comment: string;
+  userName: string; // Store user's name for display
+  createdAt: Date;
+};
+
+export interface AnalyticsData {
+  totalBookings: number;
+  totalRevenue: number;
+  bookingsPerDay: {
+    date: string;
+    count: number;
+    revenue: number;
+  }[];
+  topHotels: {
+    hotelId: string;
+    name: string;
+    totalBookings: number;
+    revenue: number;
+  }[];
+}

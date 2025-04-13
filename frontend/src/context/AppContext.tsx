@@ -14,11 +14,11 @@ type ToastMessage = {
 type AppContext = {
     showToast: (toastMessage: ToastMessage) => void;
     isLoggedIn: boolean;
+    userRole: string | null;
     stripePromise: Promise<Stripe | null>;
 };
 
 const AppContext = React.createContext<AppContext | undefined>(undefined);
-
 const stripePromise = loadStripe(STRIPE_PUB_KEY);
 
 export const AppContextProvider = ({
@@ -27,10 +27,18 @@ export const AppContextProvider = ({
     children: React.ReactNode;
 }) => {
     const [toast, setToast] = useState<ToastMessage | undefined>(undefined);
+    const [userRole, setUserRole] = useState<string | null>(null);
 
-    const { isError } = useQuery("validateToken", apiClient.validateToken, {
-        retry: false,
-    });
+    const { isError } = useQuery(
+        "validateToken",
+        apiClient.validateToken,
+        {
+            retry: false,
+            onSuccess: (data) => {
+                setUserRole(data.role);
+            },
+        }
+    );
 
     return (
         <AppContext.Provider
@@ -39,6 +47,7 @@ export const AppContextProvider = ({
                     setToast(toastMessage);
                 },
                 isLoggedIn: !isError,
+                userRole,
                 stripePromise,
             }}
         >
@@ -56,5 +65,8 @@ export const AppContextProvider = ({
 
 export const useAppContext = () => {
     const context = useContext(AppContext);
-    return context as AppContext;
+    if (!context) {
+        throw new Error("useAppContext must be used within an AppContextProvider");
+    }
+    return context;
 };
