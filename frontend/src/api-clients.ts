@@ -9,7 +9,8 @@ import {
   BookingType,
 } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:7000";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
   const response = await fetch(`${API_BASE_URL}/api/users/me`, {
@@ -221,7 +222,12 @@ export const createPaymentIntent = async (
   return response.json();
 };
 
-export const createRoomBooking = async (formData: BookingFormData) => {
+export const createRoomBooking = async (
+  formData: BookingFormData
+): Promise<{
+  booking: BookingType; // Using the backend BookingType
+  hotel: HotelType;
+}> => {
   const response = await fetch(
     `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings`,
     {
@@ -230,12 +236,18 @@ export const createRoomBooking = async (formData: BookingFormData) => {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        ...formData,
+        // Convert string dates to ISO format
+        checkIn: new Date(formData.checkIn).toISOString(),
+        checkOut: new Date(formData.checkOut).toISOString(),
+      }),
     }
   );
 
   if (!response.ok) {
-    throw new Error("Error booking room");
+    const error = await response.json();
+    throw new Error(error.message || "Failed to create booking");
   }
 
   return response.json();
@@ -338,29 +350,47 @@ export const fetchAnalytics = async (
   return response.json();
 };
 
+interface CancellationResponse {
+  message: string;
+  refundMessage: string;
+  booking: BookingType;
+}
+
 export const cancelBooking = async (
   hotelId: string,
   bookingId: string,
   cancellationReason: string
-): Promise<{ message: string; booking: BookingType }> => {
+): Promise<CancellationResponse> => {
+  console.log("Sending cancellation request:", {
+    hotelId,
+    bookingId,
+    cancellationReason,
+  });
+
   const response = await fetch(
     `${API_BASE_URL}/api/hotels/${hotelId}/bookings/${bookingId}/cancel`,
     {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
       body: JSON.stringify({ cancellationReason }),
     }
   );
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to cancel booking");
-  }
+  const text = await response.text();
 
-  return response.json();
+  try {
+    const data = JSON.parse(text);
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to cancel booking");
+    }
+    return data;
+  } catch (e) {
+    console.error("Response parsing error:", text);
+    throw new Error(`Failed to cancel booking: ${text}`);
+  }
 };
 
 export const updateProfile = async (formData: {
@@ -416,3 +446,12 @@ export const fetchAllBookings = async (): Promise<HotelType[]> => {
 
   return response.json();
 };
+
+// // Add consistent error handling for all API calls
+// const handleApiError = async (response: Response) => {
+//   if (!response.ok) {
+//     const error = await response.json();
+//     throw new Error(error.message || "An error occurred");
+//   }
+//   return response.json();
+// };

@@ -41,16 +41,17 @@ export type BookingType = {
   checkOut: Date;
   totalCost: number;
   status: BookingStatus;
-  paymentIntentId: string;
+  paymentIntentId?: string;
+  createdAt: Date;
+  updatedAt: Date;
   cancellationReason?: string;
 };
 
 export enum BookingStatus {
   CONFIRMED = "CONFIRMED",
   CANCELLED = "CANCELLED",
-  REFUNDED = "REFUNDED",
-  REFUND_FAILED = "REFUND_FAILED",
   REFUND_PENDING = "REFUND_PENDING",
+  REFUNDED = "REFUNDED",
 }
 
 export type HotelSearchResponse = {

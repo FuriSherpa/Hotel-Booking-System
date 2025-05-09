@@ -1,6 +1,6 @@
 import { BookingType, BookingStatus } from "../shared/types";
 
-const CANCELLATION_WINDOW_HOURS = 48;
+const CANCELLATION_WINDOW_HOURS = 24;
 
 export const validateCancellationEligibility = (
   booking: BookingType
@@ -17,7 +17,7 @@ export const validateCancellationEligibility = (
     (checkInDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
   if (hoursUntilCheckIn < CANCELLATION_WINDOW_HOURS) {
-    return "Cancellation is only allowed up to 48 hours before check-in";
+    return "Cancellation is only allowed up to 24 hours before check-in";
   }
 
   return null;

@@ -22,6 +22,7 @@ import Wishlist from "./pages/Wishlist";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   const { isLoggedIn, userRole } = useAppContext();
@@ -154,6 +155,25 @@ const App = () => {
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: {
+            style: {
+              background: '#f0fdf4',
+              border: '1px solid #22c55e',
+              padding: '16px',
+            },
+          },
+          error: {
+            style: {
+              background: '#fef2f2',
+              border: '1px solid #ef4444',
+              padding: '16px',
+            },
+          },
+        }}
+      />
     </Router >
   );
 };

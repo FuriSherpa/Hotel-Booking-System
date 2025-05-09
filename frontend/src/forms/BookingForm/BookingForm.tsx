@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import {
     PaymentIntentResponse,
     UserType,
+    BookingStatus
 } from "../../../../backend/src/shared/types";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement } from "@stripe/stripe-js";
@@ -10,6 +11,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import * as apiClient from "../../api-clients";
 import { useAppContext } from "../../context/AppContext";
+
 
 type Props = {
     currentUser: UserType;
@@ -27,6 +29,7 @@ export type BookingFormData = {
     hotelId: string;
     paymentIntentId: string;
     totalCost: number;
+    status: BookingStatus;
 };
 
 const BookingForm = ({ currentUser, paymentIntent }: Props) => {
@@ -84,7 +87,11 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
         });
 
         if (result.paymentIntent?.status === "succeeded") {
-            bookRoom({ ...formData, paymentIntentId: result.paymentIntent.id });
+            bookRoom({
+                ...formData,
+                paymentIntentId: result.paymentIntent.id,
+                status: BookingStatus.CONFIRMED  // Set initial status here
+            });
         }
     };
 
@@ -150,7 +157,7 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
                 <button
                     disabled={isLoading}
                     type="submit"
-                    className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 text-md disabled:bg-gray-500"
+                    className="bg-blue-600 text-white p-2 font-bold hover:bg-blue-500 cursor-pointer text-md disabled:bg-gray-500"
                 >
                     {isLoading ? "Saving..." : "Confirm Booking"}
                 </button>

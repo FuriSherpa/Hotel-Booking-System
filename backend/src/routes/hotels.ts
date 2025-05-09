@@ -135,59 +135,122 @@ router.post(
   verifyToken,
   async (req: Request, res: Response) => {
     try {
-      const paymentIntentId = req.body.paymentIntentId;
-
-      const paymentIntent = await stripe.paymentIntents.retrieve(
-        paymentIntentId as string
-      );
-
-      if (!paymentIntent) {
-        res.status(400).json({ message: "payment intent not found" });
-        return;
-      }
-
-      if (
-        paymentIntent.metadata.hotelId !== req.params.hotelId ||
-        paymentIntent.metadata.userId !== req.userId
-      ) {
-        res.status(400).json({ message: "payment intent mismatch" });
-        return;
-      }
-
-      if (paymentIntent.status !== "succeeded") {
-        res.status(400).json({
-          message: `payment intent not succeeded. Status: ${paymentIntent.status}`,
-        });
-        return;
-      }
-
-      const newBooking: BookingType = {
+      const { hotelId } = req.params;
+      const booking = {
         ...req.body,
         userId: req.userId,
-        status: BookingStatus.CONFIRMED,
+        status: BookingStatus.CONFIRMED, // Ensure status is set
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       const hotel = await Hotel.findOneAndUpdate(
-        { _id: req.params.hotelId },
+        { _id: hotelId },
         {
-          $push: { bookings: newBooking },
+          $push: { bookings: booking },
         },
         { new: true }
       );
 
       if (!hotel) {
-        res.status(400).json({ message: "hotel not found" });
+        res.status(404).json({ message: "Hotel not found" });
         return;
       }
 
-      await hotel.save();
+      // Return the newly created booking
+      const newBooking = hotel.bookings[hotel.bookings.length - 1];
       res.status(200).json({
         booking: newBooking,
         hotel: hotel,
       });
+      return;
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "something went wrong" });
+      console.error(error);
+      res.status(500).json({ message: "Something went wrong" });
+    }
+  }
+);
+
+router.post(
+  "/:hotelId/bookings/:bookingId/cancel",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    console.log("Cancellation request received:", {
+      hotelId: req.params.hotelId,
+      bookingId: req.params.bookingId,
+      userId: req.userId,
+    });
+
+    try {
+      const { hotelId, bookingId } = req.params;
+      const { cancellationReason } = req.body;
+
+      // First check if the booking exists
+      const existingHotel = await Hotel.findOne({
+        _id: hotelId,
+        "bookings._id": bookingId,
+        "bookings.userId": req.userId,
+      });
+
+      if (!existingHotel) {
+        console.log("Booking not found:", {
+          hotelId,
+          bookingId,
+          userId: req.userId,
+        });
+        res.status(404).json({
+          message: "Booking not found",
+          details: "Could not find matching hotel and booking combination",
+        });
+        return;
+      }
+
+      // Update the booking status
+      const updatedHotel = await Hotel.findOneAndUpdate(
+        {
+          _id: hotelId,
+          "bookings._id": bookingId,
+        },
+        {
+          $set: {
+            "bookings.$.status": BookingStatus.REFUND_PENDING,
+            "bookings.$.cancellationReason": cancellationReason,
+            "bookings.$.cancelledAt": new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedHotel) {
+        console.log("Failed to update booking:", { hotelId, bookingId });
+        res.status(500).json({ message: "Failed to update booking status" });
+        return;
+      }
+
+      const updatedBooking = updatedHotel.bookings.find(
+        (b) => b._id.toString() === bookingId
+      );
+
+      console.log("Booking cancelled successfully:", {
+        hotelId,
+        bookingId,
+        newStatus: updatedBooking?.status,
+      });
+
+      res.status(200).json({
+        message: "Booking cancelled successfully",
+        refundMessage:
+          "Your refund has been initiated. Please allow 5-7 business days for the amount to be refunded.",
+        booking: updatedBooking,
+      });
+      return;
+    } catch (error) {
+      console.error("Error in cancellation:", error);
+      res.status(500).json({
+        message: "Error cancelling booking",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      return;
     }
   }
 );

@@ -11,7 +11,13 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 router.post(
   "/hotels/:hotelId/bookings/:bookingId/cancel",
   verifyToken,
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: Request, res: Response) => {
+    console.log("Cancellation request received:", {
+      hotelId: req.params.hotelId,
+      bookingId: req.params.bookingId,
+      userId: req.userId,
+    });
+
     try {
       const { hotelId, bookingId } = req.params;
       const { cancellationReason } = req.body;
@@ -23,89 +29,48 @@ router.post(
       });
 
       if (!hotel) {
-        res.status(404).json({ message: "Booking not found" });
+        console.log("Hotel or booking not found");
+        res.status(404).json({
+          message: "Booking not found",
+          details: "Could not find matching hotel and booking combination",
+        });
         return;
       }
 
-      const booking = hotel.bookings.find(
-        (b) => b._id.toString() === bookingId
+      const updatedHotel = await Hotel.findOneAndUpdate(
+        {
+          _id: hotelId,
+          "bookings._id": bookingId,
+        },
+        {
+          $set: {
+            "bookings.$.status": BookingStatus.CANCELLED,
+            "bookings.$.cancellationReason": cancellationReason,
+            "bookings.$.cancelledAt": new Date(),
+          },
+        },
+        { new: true }
       );
 
-      if (!booking) {
-        res.status(404).json({ message: "Booking not found" });
+      if (!updatedHotel) {
+        res.status(404).json({ message: "Could not update booking" });
         return;
       }
 
-      // Validate booking can be cancelled
-      const validationError = validateCancellationEligibility(booking);
-      if (validationError) {
-        res.status(400).json({ message: validationError });
-        return;
-      }
-
-      // Process refund through Stripe
-      try {
-        // Set status to pending before attempting refund
-        await Hotel.findOneAndUpdate(
-          {
-            _id: hotelId,
-            "bookings._id": bookingId,
-          },
-          {
-            $set: {
-              "bookings.$.status": BookingStatus.REFUND_PENDING,
-              "bookings.$.cancellationReason": cancellationReason,
-            },
-          }
-        );
-
-        const refund = await stripe.refunds.create({
-          payment_intent: booking.paymentIntentId,
-        });
-
-        // Update to refunded status after successful refund
-        const updatedHotel = await Hotel.findOneAndUpdate(
-          {
-            _id: hotelId,
-            "bookings._id": bookingId,
-          },
-          {
-            $set: {
-              "bookings.$.status": BookingStatus.REFUNDED,
-              "bookings.$.cancellationReason": cancellationReason,
-              "bookings.$.refundId": refund.id,
-              "bookings.$.cancelledAt": new Date(),
-            },
-          },
-          { new: true }
-        );
-
-        res.status(200).json({
-          message: "Booking cancelled and refunded successfully",
-          booking: updatedHotel?.bookings.find(
-            (b) => b._id.toString() === bookingId
-          ),
-        });
-      } catch (stripeError) {
-        await Hotel.findOneAndUpdate(
-          {
-            _id: hotelId,
-            "bookings._id": bookingId,
-          },
-          {
-            $set: {
-              "bookings.$.status": BookingStatus.REFUND_FAILED,
-              "bookings.$.cancellationReason": cancellationReason,
-              "bookings.$.cancelledAt": new Date(),
-            },
-          }
-        );
-
-        throw stripeError;
-      }
+      res.status(200).json({
+        message: "Booking cancelled successfully",
+        booking: updatedHotel.bookings.find(
+          (b) => b._id.toString() === bookingId
+        ),
+      });
+      return;
     } catch (error) {
-      console.error("Refund error:", error);
-      res.status(500).json({ message: "Error processing refund" });
+      console.error("Cancellation error:", error);
+      res.status(500).json({
+        message: "Error cancelling booking",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      return;
     }
   }
 );

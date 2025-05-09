@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
-import { BookingType, HotelType, ReviewType } from "../shared/types";
+import {
+  BookingType,
+  HotelType,
+  ReviewType,
+  BookingStatus,
+} from "../shared/types";
 
 const bookingSchema = new mongoose.Schema<BookingType>({
   firstName: { type: String, required: true },
@@ -11,6 +16,12 @@ const bookingSchema = new mongoose.Schema<BookingType>({
   checkOut: { type: Date, required: true },
   userId: { type: String, required: true },
   totalCost: { type: Number, required: true },
+  status: {
+    type: String,
+    enum: Object.values(BookingStatus),
+    default: BookingStatus.CONFIRMED,
+    required: true,
+  },
 });
 
 const reviewSchema = new mongoose.Schema<ReviewType>({
