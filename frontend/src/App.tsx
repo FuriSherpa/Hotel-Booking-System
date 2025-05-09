@@ -147,9 +147,7 @@ const App = () => {
         <Route
           path="/payment-success"
           element={
-            <Layout>
-              <PaymentSuccess />
-            </Layout>
+            <PaymentSuccess />
           }
         />
 

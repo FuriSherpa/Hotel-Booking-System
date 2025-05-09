@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-hot-toast";
 import * as apiClient from "../api-clients";
 import { BookingType } from "../../../backend/src/shared/types";
+import { validateCancellationEligibility } from "../../../backend/src/utils/bookingUtils";
 
 interface Props {
     booking: BookingType;
@@ -52,6 +53,12 @@ const CancelBookingButton = ({ booking, hotelId }: Props) => {
             },
         }
     );
+
+    // Check if booking can be cancelled
+    const validationError = validateCancellationEligibility(booking);
+    if (validationError) {
+        return null; // Don't render the button if booking can't be cancelled
+    }
 
     return (
         <>

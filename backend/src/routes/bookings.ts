@@ -12,12 +12,6 @@ router.post(
   "/hotels/:hotelId/bookings/:bookingId/cancel",
   verifyToken,
   async (req: Request, res: Response) => {
-    console.log("Cancellation request received:", {
-      hotelId: req.params.hotelId,
-      bookingId: req.params.bookingId,
-      userId: req.userId,
-    });
-
     try {
       const { hotelId, bookingId } = req.params;
       const { cancellationReason } = req.body;
@@ -29,11 +23,25 @@ router.post(
       });
 
       if (!hotel) {
-        console.log("Hotel or booking not found");
         res.status(404).json({
           message: "Booking not found",
           details: "Could not find matching hotel and booking combination",
         });
+        return;
+      }
+
+      const booking = hotel.bookings.find(
+        (b) => b._id.toString() === bookingId
+      );
+      if (!booking) {
+        res.status(404).json({ message: "Booking not found" });
+        return;
+      }
+
+      // Validate cancellation eligibility
+      const validationError = validateCancellationEligibility(booking);
+      if (validationError) {
+        res.status(400).json({ message: validationError });
         return;
       }
 
