@@ -129,17 +129,17 @@ const App = () => {
             <Route
               path="/admin/dashboard"
               element={
-                <Layout>
+                <Layout1>
                   <AdminDashboard />
-                </Layout>
+                </Layout1>
               }
             />
             <Route
               path="/admin/bookings"
               element={
-                <Layout>
+                <Layout1>
                   <AdminBookings />
-                </Layout>
+                </Layout1>
               }
             />
           </>
