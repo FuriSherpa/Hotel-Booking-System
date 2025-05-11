@@ -26,8 +26,8 @@ const AdminBookings = () => {
                 return 'bg-red-100 text-red-800';
             case BookingStatus.REFUNDED:
                 return 'bg-blue-100 text-blue-800';
-            case BookingStatus.REFUND_FAILED:
-                return 'bg-orange-100 text-orange-800';
+            // case BookingStatus.REFUND_FAILED:
+            //     return 'bg-orange-100 text-orange-800';
             case BookingStatus.REFUND_PENDING:
                 return 'bg-yellow-100 text-yellow-800';
             default:

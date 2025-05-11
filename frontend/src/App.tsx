@@ -5,6 +5,7 @@ import {
   Routes,
 } from "react-router-dom";
 import Layout from "./layouts/Layout";
+import Layout1 from "./layouts/Layout1";
 import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
 import AddHotel from "./pages/AddHotel";
@@ -111,9 +112,9 @@ const App = () => {
           />
 
           <Route path="/profile" element={
-            <Layout>
+            <Layout1>
               <Profile />
-            </Layout>
+            </Layout1>
           } />
 
           <Route path="/change-password" element={

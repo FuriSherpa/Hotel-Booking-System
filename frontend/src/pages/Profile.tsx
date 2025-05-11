@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import * as apiClient from "../api-clients";
 import { useAppContext } from "../context/AppContext";
+import { useEffect } from "react"; // Add this import
 
 type ProfileFormData = {
     firstName: string;
@@ -18,14 +19,18 @@ const Profile = () => {
         apiClient.fetchCurrentUser
     );
 
-    const { register, handleSubmit, formState: { errors, isDirty } } = useForm<ProfileFormData>({
-        defaultValues: {
-            firstName: currentUser?.firstName || "",
-            lastName: currentUser?.lastName || "",
-            email: currentUser?.email || "",
-            phoneNumber: currentUser?.phoneNumber || "",
+    const { register, handleSubmit, formState: { errors, isDirty }, reset } = useForm<ProfileFormData>();
+
+    useEffect(() => {
+        if (currentUser) {
+            reset({
+                firstName: currentUser.firstName,
+                lastName: currentUser.lastName,
+                email: currentUser.email,
+                phoneNumber: currentUser.phoneNumber,
+            });
         }
-    });
+    }, [currentUser, reset]);
 
     const mutation = useMutation(apiClient.updateProfile, {
         onSuccess: () => {

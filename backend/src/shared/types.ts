@@ -50,6 +50,7 @@ export type BookingType = {
 export enum BookingStatus {
   CONFIRMED = "CONFIRMED",
   CANCELLED = "CANCELLED",
+  COMPLETED = "COMPLETED",
   REFUND_PENDING = "REFUND_PENDING",
   REFUNDED = "REFUNDED",
 }
