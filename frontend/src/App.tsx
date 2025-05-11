@@ -118,9 +118,9 @@ const App = () => {
           } />
 
           <Route path="/change-password" element={
-            <Layout>
+            <Layout1>
               <ChangePassword />
-            </Layout>
+            </Layout1>
           } />
         </>}
 

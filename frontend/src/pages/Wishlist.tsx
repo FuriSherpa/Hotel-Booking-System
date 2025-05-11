@@ -1,4 +1,3 @@
-// frontend/src/pages/Wishlist.tsx
 import { useQuery } from "react-query";
 import * as apiClient from "../api-clients";
 import SearchResultsCard from "../components/SearchResultsCard";

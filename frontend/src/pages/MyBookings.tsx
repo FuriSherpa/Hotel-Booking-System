@@ -99,9 +99,9 @@ const MyBookings = () => {
         .filter(hotel => hotel.bookings.length > 0);
 
     return (
-        <div className="max-w-7xl p-0 mx-auto sm:px-6 lg:px-8">
+        <div className="space-y-5">
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">My Bookings</h1>
             <div className="bg-white rounded-lg shadow-sm p-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">My Bookings</h1>
 
                 {/* Search Bar */}
                 <div className="mb-6">
