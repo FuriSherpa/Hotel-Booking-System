@@ -22,14 +22,16 @@ const bookingSchema = new mongoose.Schema<BookingType>({
     default: BookingStatus.CONFIRMED,
     required: true,
   },
+  reviewed: { type: Boolean, default: false },
 });
 
 const reviewSchema = new mongoose.Schema<ReviewType>({
+  bookingId: { type: String, required: true, unique: true },
   userId: { type: String, required: true },
   rating: { type: Number, required: true, min: 1, max: 5 },
   comment: { type: String, required: true },
   userName: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, required: true },
 });
 
 const hotelSchema = new mongoose.Schema<HotelType>({

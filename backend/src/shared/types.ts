@@ -45,6 +45,7 @@ export type BookingType = {
   createdAt: Date;
   updatedAt: Date;
   cancellationReason?: string;
+  reviewed: boolean;
 };
 
 export enum BookingStatus {
@@ -73,9 +74,10 @@ export type PaymentIntentResponse = {
 export type ReviewType = {
   _id: string;
   userId: string;
-  rating: number; // 1-5 stars
+  bookingId: string; // Add this field to link review with specific booking
+  rating: number;
   comment: string;
-  userName: string; // Store user's name for display
+  userName: string;
   createdAt: Date;
 };
 

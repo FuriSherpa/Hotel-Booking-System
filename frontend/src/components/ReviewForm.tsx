@@ -11,16 +11,7 @@ type Props = {
 type ReviewFormData = {
     rating: number;
     comment: string;
-};
-
-// Add this function to check if user can review
-const canUserReview = (bookings: any[] | undefined) => {
-    if (!bookings) return false;
-
-    return bookings.some(booking =>
-        booking.status === BookingStatus.COMPLETED &&
-        new Date(booking.checkOut) < new Date()
-    );
+    bookingId: string;
 };
 
 const ReviewForm = ({ hotelId }: Props) => {
@@ -49,16 +40,20 @@ const ReviewForm = ({ hotelId }: Props) => {
         apiClient.fetchMyBookings,
     );
 
-    const isEligibleToReview = canUserReview(
-        myBookings?.find(hotel => hotel._id === hotelId)?.bookings
-    );
+    // Get eligible bookings (completed, past checkout date, and not yet reviewed)
+    const eligibleBookings = myBookings?.find(hotel => hotel._id === hotelId)?.bookings?.filter(booking => {
+        const isCompleted = booking.status === "COMPLETED";
+        const isPastCheckout = new Date(booking.checkOut) < new Date();
+        const hasNoReview = !booking.reviewed;
+        return isCompleted && isPastCheckout && hasNoReview;
+    }) || [];
 
-    if (!isEligibleToReview) {
+    if (eligibleBookings.length === 0) {
         return (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
                 <p className="text-yellow-800">
                     <span className="mr-2">ℹ️</span>
-                    You can only review this hotel after completing your stay.
+                    No eligible bookings found to review.
                 </p>
             </div>
         );
@@ -72,6 +67,24 @@ const ReviewForm = ({ hotelId }: Props) => {
         <form onSubmit={onSubmit} className="mt-4">
             <h3 className="text-xl font-bold mb-4">Write a Review</h3>
             <div className="space-y-4">
+                <div>
+                    <label className="block text-sm font-medium mb-2">Select Booking</label>
+                    <select
+                        {...register("bookingId", { required: "Please select a booking" })}
+                        className="w-full px-3 py-2 border rounded-md"
+                    >
+                        <option value="">Select a booking</option>
+                        {eligibleBookings.map((booking) => (
+                            <option key={booking._id} value={booking._id}>
+                                Stay: {new Date(booking.checkIn).toLocaleDateString()} - {new Date(booking.checkOut).toLocaleDateString()}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.bookingId && (
+                        <span className="text-red-500 text-sm">{errors.bookingId.message}</span>
+                    )}
+                </div>
+
                 <div>
                     <label className="block text-sm font-bold mb-2">Rating</label>
                     <select

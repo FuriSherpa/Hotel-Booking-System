@@ -12,80 +12,59 @@ const router = express.Router();
 interface ReviewRequestBody {
   rating: number;
   comment: string;
+  bookingId: string;
 }
 
 // Add a review
 router.post(
   "/:hotelId",
   verifyToken,
-  [
-    body("rating")
-      .isInt({ min: 1, max: 5 })
-      .withMessage("Rating must be between 1-5"),
-    body("comment").isString().notEmpty().withMessage("Comment is required"),
-  ],
-  async (
-    req: Request<{ hotelId: string }, {}, ReviewRequestBody>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
-        return;
-      }
-
       const hotelId = req.params.hotelId;
+      const { rating, comment, bookingId } = req.body;
 
-      // Check if user has completed stay at this hotel
       const hotel = await Hotel.findById(hotelId);
       if (!hotel) {
         res.status(404).json({ message: "Hotel not found" });
         return;
       }
 
-      // Find user's booking for this hotel
-      const userBooking = hotel.bookings.find(
-        (booking) =>
-          booking.userId === req.userId &&
-          booking.status === BookingStatus.COMPLETED &&
-          new Date(booking.checkOut) < new Date()
+      // Check if booking exists and is completed
+      const booking = hotel.bookings.find(
+        (b) =>
+          b._id.toString() === bookingId &&
+          b.userId === req.userId &&
+          b.status === "COMPLETED" &&
+          new Date(b.checkOut) < new Date()
       );
 
-      if (!userBooking) {
+      if (!booking) {
         res.status(403).json({
-          message: "You can only review hotels after completing your stay",
+          message: "Booking not found or not eligible for review",
         });
         return;
       }
 
-      // Check if user has already reviewed
+      // Check if review already exists for this booking
       const existingReview = hotel.reviews.find(
-        (review) => review.userId === req.userId
+        (r) => r.bookingId === bookingId
       );
-
       if (existingReview) {
         res.status(400).json({
-          message: "You have already reviewed this hotel",
+          message: "You have already submitted a review for this booking",
         });
         return;
       }
 
-      // Get user info and create review
       const user = await User.findById(req.userId);
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-        return;
-      }
-
-      const { rating, comment } = req.body;
       const review = {
-        _id: new mongoose.Types.ObjectId().toString(),
+        _id: new mongoose.Types.ObjectId().toString(), // Add this line
+        bookingId,
         userId: req.userId,
         rating,
         comment,
-        userName: `${user.firstName} ${user.lastName}`,
+        userName: `${user?.firstName} ${user?.lastName}`,
         createdAt: new Date(),
       };
 
