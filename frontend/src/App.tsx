@@ -24,6 +24,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
 import { Toaster } from 'react-hot-toast';
+import AdminHome from './pages/AdminHome';
 
 const App = () => {
   const { isLoggedIn, userRole } = useAppContext();
@@ -34,7 +35,7 @@ const App = () => {
           path="/"
           element={
             <Layout>
-              <Home />
+              {userRole === "admin" ? <AdminHome /> : <Home />}
             </Layout>
           }
         />

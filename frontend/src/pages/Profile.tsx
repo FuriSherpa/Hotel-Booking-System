@@ -59,7 +59,7 @@ const Profile = () => {
                     <div className="space-y-6">
                         <div className="flex flex-col md:flex-row gap-6">
                             <label className="text-gray-700 text-sm font-medium flex-1">
-                                <span className="block mb-2 flex items-center">
+                                <span className="mb-2 flex items-center">
                                     <FiUser className="inline-block mr-2" />
                                     First Name
                                 </span>
@@ -74,7 +74,7 @@ const Profile = () => {
                             </label>
 
                             <label className="text-gray-700 text-sm font-medium flex-1">
-                                <span className="block mb-2 flex items-center">
+                                <span className="mb-2 flex items-center">
                                     <FiUser className="inline-block mr-2" />
                                     Last Name
                                 </span>
@@ -90,7 +90,7 @@ const Profile = () => {
                         </div>
 
                         <label className="text-gray-700 text-sm font-medium block">
-                            <span className="block mb-2 flex items-center">
+                            <span className="mb-2 flex items-center">
                                 <FiMail className="inline-block mr-2" />
                                 Email Address
                             </span>
@@ -103,7 +103,7 @@ const Profile = () => {
                         </label>
 
                         <label className="text-gray-700 text-sm font-medium block">
-                            <span className="block mb-2 flex items-center">
+                            <span className="mb-2 flex items-center">
                                 <FiPhone className="inline-block mr-2" />
                                 Phone Number
                             </span>

@@ -40,8 +40,6 @@ const Header = () => {
                 </>
               )}
 
-              <ProfileMenu />
-
               {userRole === "admin" && (
                 <>
                   <Link
@@ -68,6 +66,7 @@ const Header = () => {
                 </>
               )}
 
+              <ProfileMenu />
               <SignOutButton />
             </>
           ) : (
