@@ -29,7 +29,7 @@ const ReviewForm = ({ hotelId }: Props) => {
                 reset();
             },
             onError: () => {
-                showToast({ message: "Error submitting review", type: "error" });
+                showToast({ message: "Cannot Review More Than Once Per Booking", type: "error" });
             },
         }
     );
@@ -117,7 +117,7 @@ const ReviewForm = ({ hotelId }: Props) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 disabled:bg-gray-400"
+                    className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-500 disabled:bg-gray-400"
                 >
                     {isLoading ? "Submitting..." : "Submit Review"}
                 </button>
