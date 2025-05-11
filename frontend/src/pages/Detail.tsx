@@ -70,6 +70,8 @@ const Detail = () => {
 
             {/* Reviews section */}
             <div className="border-t pt-6">
+                <h2 className="text-2xl font-bold mb-4">Reviews</h2>
+
                 {/* Show average rating at the top of reviews section */}
                 <div className="flex items-center mb-6">
                     <span className="text-2xl font-bold mr-2">

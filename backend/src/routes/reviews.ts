@@ -4,6 +4,7 @@ import verifyToken from "../middleware/auth";
 import Hotel from "../models/hotel";
 import User from "../models/user";
 import mongoose from "mongoose";
+import { BookingStatus } from "../shared/types";
 
 const router = express.Router();
 
@@ -35,7 +36,43 @@ router.post(
         return;
       }
 
-      // Get user info for the review
+      const hotelId = req.params.hotelId;
+
+      // Check if user has completed stay at this hotel
+      const hotel = await Hotel.findById(hotelId);
+      if (!hotel) {
+        res.status(404).json({ message: "Hotel not found" });
+        return;
+      }
+
+      // Find user's booking for this hotel
+      const userBooking = hotel.bookings.find(
+        (booking) =>
+          booking.userId === req.userId &&
+          booking.status === BookingStatus.COMPLETED &&
+          new Date(booking.checkOut) < new Date()
+      );
+
+      if (!userBooking) {
+        res.status(403).json({
+          message: "You can only review hotels after completing your stay",
+        });
+        return;
+      }
+
+      // Check if user has already reviewed
+      const existingReview = hotel.reviews.find(
+        (review) => review.userId === req.userId
+      );
+
+      if (existingReview) {
+        res.status(400).json({
+          message: "You have already reviewed this hotel",
+        });
+        return;
+      }
+
+      // Get user info and create review
       const user = await User.findById(req.userId);
       if (!user) {
         res.status(404).json({ message: "User not found" });
@@ -43,27 +80,6 @@ router.post(
       }
 
       const { rating, comment } = req.body;
-      const hotelId = req.params.hotelId;
-
-      // Check if user has already reviewed
-      const existingReview = await Hotel.findOne({
-        _id: hotelId,
-        "reviews.userId": req.userId,
-      });
-
-      if (existingReview) {
-        res
-          .status(400)
-          .json({ message: "You have already reviewed this hotel" });
-        return;
-      }
-
-      const hotel = await Hotel.findById(hotelId);
-      if (!hotel) {
-        res.status(404).json({ message: "Hotel not found" });
-        return;
-      }
-
       const review = {
         _id: new mongoose.Types.ObjectId().toString(),
         userId: req.userId,

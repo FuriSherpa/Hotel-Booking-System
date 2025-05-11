@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useAppContext } from "../context/AppContext";
 import * as apiClient from "../api-clients";
+import { BookingStatus } from "../../../backend/src/shared/types";
 
 type Props = {
     hotelId: string;
@@ -10,6 +11,16 @@ type Props = {
 type ReviewFormData = {
     rating: number;
     comment: string;
+};
+
+// Add this function to check if user can review
+const canUserReview = (bookings: any[] | undefined) => {
+    if (!bookings) return false;
+
+    return bookings.some(booking =>
+        booking.status === BookingStatus.COMPLETED &&
+        new Date(booking.checkOut) < new Date()
+    );
 };
 
 const ReviewForm = ({ hotelId }: Props) => {
@@ -31,6 +42,27 @@ const ReviewForm = ({ hotelId }: Props) => {
             },
         }
     );
+
+    // Fetch user's bookings
+    const { data: myBookings } = useQuery(
+        "fetchMyBookings",
+        apiClient.fetchMyBookings,
+    );
+
+    const isEligibleToReview = canUserReview(
+        myBookings?.find(hotel => hotel._id === hotelId)?.bookings
+    );
+
+    if (!isEligibleToReview) {
+        return (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+                <p className="text-yellow-800">
+                    <span className="mr-2">ℹ️</span>
+                    You can only review this hotel after completing your stay.
+                </p>
+            </div>
+        );
+    }
 
     const onSubmit = handleSubmit((data) => {
         mutate(data);
