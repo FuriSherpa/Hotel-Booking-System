@@ -66,7 +66,7 @@ const SearchBar = () => {
                 <MdTravelExplore size={25} className="mr-2" />
                 <input
                     type="text"
-                    placeholder="Search by city, country or hotel name"
+                    placeholder="Search by city, or hotel name"
                     className="text-md w-full focus:outline-none"
                     value={destination}
                     onChange={(event) => setDestination(event.target.value)}

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import Toast from "../components/Toast";
 import { useQuery } from "react-query";
 import * as apiClient from "../api-clients";
@@ -15,10 +15,12 @@ type AppContext = {
     showToast: (toastMessage: ToastMessage) => void;
     isLoggedIn: boolean;
     userRole: string | null;
+    userId: string | null;
     stripePromise: Promise<Stripe | null>;
+    logout: () => void;
 };
 
-const AppContext = React.createContext<AppContext | undefined>(undefined);
+const AppContext = createContext<AppContext | undefined>(undefined);
 const stripePromise = loadStripe(STRIPE_PUB_KEY);
 
 export const AppContextProvider = ({
@@ -28,6 +30,8 @@ export const AppContextProvider = ({
 }) => {
     const [toast, setToast] = useState<ToastMessage | undefined>(undefined);
     const [userRole, setUserRole] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const { isError } = useQuery(
         "validateToken",
@@ -36,9 +40,18 @@ export const AppContextProvider = ({
             retry: false,
             onSuccess: (data) => {
                 setUserRole(data.role);
+                setUserId(data.id);
+                setIsLoggedIn(true);
             },
         }
     );
+
+    const logout = () => {
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        setUserRole(null);
+        setUserId(null);
+    };
 
     return (
         <AppContext.Provider
@@ -46,9 +59,11 @@ export const AppContextProvider = ({
                 showToast: (toastMessage) => {
                     setToast(toastMessage);
                 },
-                isLoggedIn: !isError,
+                isLoggedIn,
                 userRole,
+                userId,
                 stripePromise,
+                logout,
             }}
         >
             {toast && (
