@@ -354,9 +354,10 @@ const AdminBookings: React.FC = () => {
                                 className="p-2 border rounded-lg"
                             >
                                 <option value="ALL">All Statuses</option>
-                                {Object.values(BookingStatus).map(status => (
-                                    <option key={status} value={status}>{status}</option>
-                                ))}
+                                <option value={BookingStatus.COMPLETED}>Completed</option>
+                                <option value={BookingStatus.CONFIRMED}>Confirmed</option>
+                                <option value={BookingStatus.REFUNDED}>Refunded</option>
+                                <option value={BookingStatus.REFUND_PENDING}>Refund Pending</option>
                             </select>
 
                             {/* Date Range Picker */}
