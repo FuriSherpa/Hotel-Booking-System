@@ -1,4 +1,5 @@
 import { BookingType, BookingStatus } from "../shared/types";
+import Hotel from "../models/hotel";
 
 const CANCELLATION_WINDOW_HOURS = 24;
 
@@ -21,4 +22,29 @@ export const validateCancellationEligibility = (
   }
 
   return null;
+};
+
+export const updateBookingStatus = async (
+  hotelId: string,
+  booking: BookingType
+): Promise<boolean> => {
+  if (
+    booking.status === BookingStatus.CONFIRMED &&
+    new Date(booking.checkOut) < new Date()
+  ) {
+    // Update booking status to COMPLETED
+    const result = await Hotel.updateOne(
+      {
+        _id: hotelId,
+        "bookings._id": booking._id,
+      },
+      {
+        $set: {
+          "bookings.$.status": BookingStatus.COMPLETED,
+        },
+      }
+    );
+    return result.modifiedCount > 0;
+  }
+  return false;
 };

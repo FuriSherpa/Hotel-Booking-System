@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import verifyToken from "../middleware/auth";
 import Hotel from "../models/hotel";
 import { HotelType } from "../shared/types";
+import { updateBookingStatus } from "../utils/bookingUtils";
 
 const router = express.Router();
 
@@ -12,7 +13,21 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
       bookings: { $elemMatch: { userId: req.userId } },
     });
 
-    const results = hotels.map((hotel) => {
+    // Update booking statuses
+    for (const hotel of hotels) {
+      for (const booking of hotel.bookings) {
+        if (booking.userId === req.userId) {
+          await updateBookingStatus(hotel._id, booking);
+        }
+      }
+    }
+
+    // Fetch updated hotels
+    const updatedHotels = await Hotel.find({
+      bookings: { $elemMatch: { userId: req.userId } },
+    });
+
+    const results = updatedHotels.map((hotel) => {
       const userBookings = hotel.bookings.filter(
         (booking) => booking.userId === req.userId
       );

@@ -3,6 +3,7 @@ import verifyToken from "../middleware/auth";
 import { verifyRole } from "../middleware/verifyRole";
 import Hotel from "../models/hotel";
 import { BookingStatus } from "../shared/types";
+import { updateBookingStatus } from "../utils/bookingUtils";
 
 const router = express.Router();
 
@@ -17,7 +18,19 @@ router.get(
         bookings: { $exists: true, $ne: [] },
       });
 
-      res.json(hotels);
+      // Update booking statuses
+      for (const hotel of hotels) {
+        for (const booking of hotel.bookings) {
+          await updateBookingStatus(hotel._id, booking);
+        }
+      }
+
+      // Fetch updated hotels
+      const updatedHotels = await Hotel.find({
+        bookings: { $exists: true, $ne: [] },
+      });
+
+      res.json(updatedHotels);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error fetching bookings" });
