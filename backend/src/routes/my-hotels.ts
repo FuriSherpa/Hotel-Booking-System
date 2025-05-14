@@ -132,4 +132,36 @@ router.put(
   }
 );
 
+router.delete("/:hotelId", verifyToken, async (req: Request, res: Response) => {
+  try {
+    const { hotelId } = req.params;
+
+    // Check if hotel exists
+    const hotel = await Hotel.findById(hotelId);
+    if (!hotel) {
+      res.status(404).json({ message: "Hotel not found" });
+      return;
+    }
+
+    // Check if hotel has any active bookings
+    const hasActiveBookings = hotel.bookings?.some(
+      (booking) =>
+        booking.status === "CONFIRMED" || booking.status === "COMPLETED"
+    );
+
+    if (hasActiveBookings) {
+      res.status(400).json({
+        message: "Cannot delete hotel with active bookings",
+      });
+      return;
+    }
+
+    await Hotel.findByIdAndDelete(hotelId);
+    res.status(200).json({ message: "Hotel deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting hotel" });
+  }
+});
+
 export default router;

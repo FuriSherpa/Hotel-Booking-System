@@ -1,12 +1,17 @@
 import { useFormContext } from "react-hook-form"
 import { HotelFormData } from "./ManageHotelForm";
+import { useLocation } from "react-router-dom";
 
 const DetailsSection = () => {
     const { register, formState: { errors }, } = useFormContext<HotelFormData>();
+    const location = useLocation();
+    const isEditMode = location.pathname.includes('edit-hotel');
 
     return (
         <div className="flex flex-col gap-4">
-            <h1 className="text-3xl font-bold mb-3">Add Hotel</h1>
+            <h1 className="text-3xl font-bold mb-3">
+                {isEditMode ? "Edit Hotel" : "Add Hotel"}
+            </h1>
             <label className="text-gray-700 text-sm font-bold flex-1">
                 Name
                 <input

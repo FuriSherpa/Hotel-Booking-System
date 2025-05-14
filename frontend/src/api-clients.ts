@@ -447,6 +447,17 @@ export const fetchAllBookings = async (): Promise<HotelType[]> => {
   return response.json();
 };
 
+export const deleteHotel = async (hotelId: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/api/my-hotels/${hotelId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete hotel");
+  }
+};
+
 // // Add consistent error handling for all API calls
 // const handleApiError = async (response: Response) => {
 //   if (!response.ok) {
