@@ -7,6 +7,7 @@ import {
   UserType,
   AnalyticsData,
   BookingType,
+  BookingStatus,
 } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 const API_BASE_URL =
@@ -544,6 +545,30 @@ export const checkRoomAvailability = async (
 
   if (!response.ok) {
     throw new Error("Error checking room availability");
+  }
+
+  return response.json();
+};
+
+export const updateBookingStatus = async (
+  hotelId: string,
+  bookingId: string,
+  status: BookingStatus
+) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/bookings/${hotelId}/bookings/${bookingId}/status`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ status }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update booking status");
   }
 
   return response.json();

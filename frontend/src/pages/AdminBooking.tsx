@@ -1,13 +1,15 @@
 import React from 'react';
-import { useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useState } from "react";
 import * as apiClient from "../api-clients";
 import { BookingStatus, HotelType } from "../../../backend/src/shared/types";
 import CancelBookingModal from "../components/CancelBookingModal";
+import ConfirmationModal from '../components/ConfirmationModal1';
 import { FaSearch, FaDownload, FaMapMarkerAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CSVLink } from "react-csv";
+import { toast } from "react-hot-toast";
 
 const AdminBookings: React.FC = () => {
     const [showCancelModal, setShowCancelModal] = useState(false);
@@ -24,10 +26,34 @@ const AdminBookings: React.FC = () => {
     const [sortBy, setSortBy] = useState<"date" | "status" | "amount">("date");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [hotelSearchQuery, setHotelSearchQuery] = useState(""); // <-- New state for hotel search
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [confirmationAction, setConfirmationAction] = useState<{
+        hotelId: string;
+        bookingId: string;
+        status: BookingStatus;
+        actionType: 'cancel' | 'refund';
+    } | null>(null);
+
+    const queryClient = useQueryClient();
 
     const { data: hotels, isLoading } = useQuery(
         "fetchAllBookings",
         apiClient.fetchAllBookings
+    );
+
+    const { mutate: updateStatus } = useMutation(
+        ({ hotelId, bookingId, status }: { hotelId: string; bookingId: string; status: BookingStatus }) =>
+            apiClient.updateBookingStatus(hotelId, bookingId, status),
+        {
+            onSuccess: () => {
+                toast.success("Booking status updated successfully");
+                // Refresh the bookings data
+                queryClient.invalidateQueries("fetchAllBookings");
+            },
+            onError: () => {
+                toast.error("Failed to update booking status");
+            },
+        }
     );
 
     const getStatusStyle = (status: BookingStatus) => {
@@ -202,6 +228,11 @@ const AdminBookings: React.FC = () => {
         parts.push(new Date().toISOString().split('T')[0]);
 
         return parts.join('_') + '.csv';
+    };
+
+    const handleStatusUpdate = (hotelId: string, bookingId: string, status: BookingStatus, actionType: 'cancel' | 'refund') => {
+        setConfirmationAction({ hotelId, bookingId, status, actionType });
+        setShowConfirmationModal(true);
     };
 
     if (isLoading) {
@@ -440,7 +471,36 @@ const AdminBookings: React.FC = () => {
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-
+                                                        {booking.status === BookingStatus.CONFIRMED && (
+                                                            <button
+                                                                onClick={() => handleStatusUpdate(
+                                                                    hotel._id,
+                                                                    booking._id,
+                                                                    BookingStatus.REFUND_PENDING,
+                                                                    'cancel'
+                                                                )}
+                                                                className="text-red-600 hover:text-red-900 transition-colors duration-200"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        )}
+                                                        {booking.status === BookingStatus.REFUND_PENDING && (
+                                                            <button
+                                                                onClick={() => handleStatusUpdate(
+                                                                    hotel._id,
+                                                                    booking._id,
+                                                                    BookingStatus.REFUNDED,
+                                                                    'refund'
+                                                                )}
+                                                                className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                                                            >
+                                                                Refund
+                                                            </button>
+                                                        )}
+                                                        {(booking.status === BookingStatus.COMPLETED ||
+                                                            booking.status === BookingStatus.REFUNDED) && (
+                                                                <span className="text-gray-400">No actions available</span>
+                                                            )}
                                                     </td>
                                                 </tr>
                                             ))
@@ -461,6 +521,28 @@ const AdminBookings: React.FC = () => {
                         setShowCancelModal(false);
                         setSelectedBooking(null);
                     }}
+                />
+            )}
+            {showConfirmationModal && confirmationAction && (
+                <ConfirmationModal
+                    isOpen={showConfirmationModal}
+                    onClose={() => {
+                        setShowConfirmationModal(false);
+                        setConfirmationAction(null);
+                    }}
+                    onConfirm={() => {
+                        updateStatus({
+                            hotelId: confirmationAction.hotelId,
+                            bookingId: confirmationAction.bookingId,
+                            status: confirmationAction.status
+                        });
+                    }}
+                    title={`Confirm ${confirmationAction.actionType === 'cancel' ? 'Cancellation' : 'Refund'}`}
+                    message={`Are you sure you want to ${confirmationAction.actionType === 'cancel' ?
+                        'cancel this booking' :
+                        'process the refund for this booking'
+                        }?`}
+                    confirmText={confirmationAction.actionType === 'cancel' ? 'Cancel Booking' : 'Process Refund'}
                 />
             )}
         </div>

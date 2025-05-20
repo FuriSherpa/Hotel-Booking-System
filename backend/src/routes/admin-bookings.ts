@@ -76,4 +76,45 @@ router.put(
   }
 );
 
+// Update booking status (admin only)
+router.put(
+  "/:hotelId/bookings/:bookingId/status",
+  verifyToken,
+  verifyRole("admin"),
+  async (req: Request, res: Response) => {
+    try {
+      const { hotelId, bookingId } = req.params;
+      const { status } = req.body;
+
+      const hotel = await Hotel.findOneAndUpdate(
+        {
+          _id: hotelId,
+          "bookings._id": bookingId,
+        },
+        {
+          $set: {
+            "bookings.$.status": status,
+            "bookings.$.updatedAt": new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!hotel) {
+        res.status(404).json({ message: "Booking not found" });
+        return;
+      }
+
+      const updatedBooking = hotel.bookings.find(
+        (b) => b._id.toString() === bookingId
+      );
+
+      res.json({ booking: updatedBooking });
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+      res.status(500).json({ message: "Error updating booking status" });
+    }
+  }
+);
+
 export default router;
