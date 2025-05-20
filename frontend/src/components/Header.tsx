@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import SignOutButton from './SignOutButton';
 import ProfileMenu from './ProfileMenu';
-import { FaCalendarAlt, FaHeart, FaChartLine, FaBook, FaBuilding, FaSignInAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaHeart, FaChartLine, FaBook, FaBuilding, FaSignInAlt, FaUsers } from 'react-icons/fa';
 
 const Header = () => {
   const { isLoggedIn, userRole } = useAppContext();
@@ -62,6 +62,13 @@ const Header = () => {
                   >
                     <FaBuilding className="text-xl mr-2" />
                     Hotels
+                  </Link>
+                  <Link
+                    className='flex items-center text-white px-3 font-bold hover:text-[#FF7F50] transition-colors'
+                    to="/admin/users"
+                  >
+                    <FaUsers className="text-xl mr-2" />
+                    Users
                   </Link>
                 </>
               )}

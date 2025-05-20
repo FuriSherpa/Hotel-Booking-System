@@ -25,6 +25,7 @@ import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
 import { Toaster } from 'react-hot-toast';
 import AdminHome from './pages/AdminHome';
+import AdminUsers from "./pages/AdminUsers";
 
 const App = () => {
   const { isLoggedIn, userRole } = useAppContext();
@@ -140,6 +141,14 @@ const App = () => {
               element={
                 <Layout1>
                   <AdminBookings />
+                </Layout1>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <Layout1>
+                  <AdminUsers />
                 </Layout1>
               }
             />

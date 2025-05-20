@@ -458,6 +458,27 @@ export const deleteHotel = async (hotelId: string): Promise<void> => {
   }
 };
 
+export const fetchUsers = async (): Promise<UserType[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching users");
+  }
+  return response.json();
+};
+
+export const deleteUser = async (userId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error deleting user");
+  }
+  return response.json();
+};
+
 // // Add consistent error handling for all API calls
 // const handleApiError = async (response: Response) => {
 //   if (!response.ok) {
