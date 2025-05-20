@@ -26,6 +26,7 @@ import ChangePassword from "./pages/ChangePassword";
 import { Toaster } from 'react-hot-toast';
 import AdminHome from './pages/AdminHome';
 import AdminUsers from "./pages/AdminUsers";
+import UserDetails from './pages/UserDetails';
 
 const App = () => {
   const { isLoggedIn, userRole } = useAppContext();
@@ -149,6 +150,14 @@ const App = () => {
               element={
                 <Layout1>
                   <AdminUsers />
+                </Layout1>
+              }
+            />
+            <Route
+              path="/admin/users/:userId"
+              element={
+                <Layout1>
+                  <UserDetails />
                 </Layout1>
               }
             />

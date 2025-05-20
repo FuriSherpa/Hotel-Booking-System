@@ -3,14 +3,18 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import * as apiClient from '../api-clients';
 import { UserType } from '../../../backend/src/shared/types';
 import { useAppContext } from '../context/AppContext';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaInfoCircle } from 'react-icons/fa';
 import ConfirmationModal from '../components/ConfirmationModal';
+import UserDetailsModal from '../components/UserDetailsModal';
+import { useNavigate } from 'react-router-dom';
 
 const AdminUsers = () => {
     const { showToast } = useAppContext();
     const queryClient = useQueryClient();
     const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const { data: users, isLoading } = useQuery('fetchUsers', apiClient.fetchUsers);
 
@@ -20,6 +24,8 @@ const AdminUsers = () => {
             onSuccess: () => {
                 showToast({ message: "User deleted successfully", type: "success" });
                 queryClient.invalidateQueries('fetchUsers');
+                setIsDeleteModalOpen(false);
+                setSelectedUser(null);
             },
             onError: () => {
                 showToast({ message: "Error deleting user", type: "error" });
@@ -30,6 +36,10 @@ const AdminUsers = () => {
     const handleDeleteClick = (user: UserType) => {
         setSelectedUser(user);
         setIsDeleteModalOpen(true);
+    };
+
+    const handleDetailsClick = (user: UserType) => {
+        navigate(`/admin/users/${user._id}`);
     };
 
     const handleConfirmDelete = () => {
@@ -69,6 +79,12 @@ const AdminUsers = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <button
+                                        onClick={() => handleDetailsClick(user)}
+                                        className="text-blue-600 hover:text-blue-900 mr-4"
+                                    >
+                                        <FaInfoCircle className="inline-block mr-1" /> Details
+                                    </button>
+                                    <button
                                         onClick={() => handleDeleteClick(user)}
                                         className="text-red-600 hover:text-red-900"
                                     >
@@ -88,6 +104,17 @@ const AdminUsers = () => {
                 title="Confirm Delete"
                 message={`Are you sure you want to delete customer ${selectedUser?.firstName} ${selectedUser?.lastName}?`}
             />
+
+            {selectedUser && (
+                <UserDetailsModal
+                    user={selectedUser}
+                    isOpen={isDetailsModalOpen}
+                    onClose={() => {
+                        setIsDetailsModalOpen(false);
+                        setSelectedUser(null);
+                    }}
+                />
+            )}
         </div>
     );
 };

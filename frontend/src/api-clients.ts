@@ -479,6 +479,29 @@ export const deleteUser = async (userId: string) => {
   return response.json();
 };
 
+export const fetchUserById = async (userId: string): Promise<UserType> => {
+  const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching user details");
+  }
+  return response.json();
+};
+
+export const fetchUserBookings = async (userId: string) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/users/${userId}/bookings`,
+    {
+      credentials: "include",
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Error fetching user bookings");
+  }
+  return response.json();
+};
+
 // // Add consistent error handling for all API calls
 // const handleApiError = async (response: Response) => {
 //   if (!response.ok) {
