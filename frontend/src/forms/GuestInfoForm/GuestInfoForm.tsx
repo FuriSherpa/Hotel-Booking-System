@@ -3,8 +3,10 @@ import { useForm } from "react-hook-form";
 import { useSearchContext } from "../../context/SearchContext";
 import { useAppContext } from "../../context/AppContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from 'react-query';
+import * as apiClient from "../../api-clients";
 
-type props = {
+type Props = {
     hotelId: string;
     pricePerNight: number;
 }
@@ -16,7 +18,7 @@ type GuestInfoFormData = {
     childCount: number;
 }
 
-const GuestInfoForm = ({ hotelId, pricePerNight }: props) => {
+const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
     const search = useSearchContext();
     const { isLoggedIn } = useAppContext();
     const navigate = useNavigate();
@@ -48,6 +50,16 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: props) => {
         search.saveSearchValues("", data.checkIn, data.checkOut, data.adultCount, data.childCount, "");
         navigate(`/hotel/${hotelId}/booking`, { state: { from: location } });
     }
+
+    const { data: availability } = useQuery(
+        ['roomAvailability', hotelId, checkIn, checkOut],
+        () => checkIn && checkOut ?
+            apiClient.checkRoomAvailability(hotelId, checkIn, checkOut) :
+            Promise.resolve(null),
+        {
+            enabled: !!hotelId && !!checkIn && !!checkOut
+        }
+    );
 
     return (
         <div className="flex flex-col p-4 bg-blue-200 gap-4">
@@ -125,16 +137,34 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: props) => {
                             </span>
                         )}
                     </div>
+                    {availability && !availability.available && (
+                        <div className="text-red-500 text-sm">
+                            No rooms available for selected dates
+                        </div>
+                    )}
+
+                    {availability && availability.available && (
+                        <div className="text-green-500 text-sm">
+                            {Math.min(...availability.availabilityByDate.map(d => d.availableRooms))} rooms available
+                        </div>
+                    )}
+
                     {isLoggedIn ? (
-                        <button className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl cursor-pointer">
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl disabled:bg-gray-500"
+                            disabled={!availability?.available}
+                        >
                             Book Now
                         </button>
                     ) : (
-                        <button className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl">
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white h-full p-2 font-bold hover:bg-blue-500 text-xl"
+                        >
                             Login to Book
                         </button>
-                    )
-                    }
+                    )}
                 </div>
             </form>
         </div>

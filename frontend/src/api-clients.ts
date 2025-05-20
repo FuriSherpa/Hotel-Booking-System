@@ -522,6 +522,33 @@ export const toggleUserStatus = async (userId: string, reason?: string) => {
   return response.json();
 };
 
+export const checkRoomAvailability = async (
+  hotelId: string,
+  checkIn: Date,
+  checkOut: Date
+): Promise<{
+  available: boolean;
+  availabilityByDate: Array<{
+    date: string;
+    availableRooms: number;
+  }>;
+  totalRooms: number;
+}> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/hotels/${hotelId}/availability?` +
+      `checkIn=${checkIn.toISOString()}&checkOut=${checkOut.toISOString()}`,
+    {
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error checking room availability");
+  }
+
+  return response.json();
+};
+
 // // Add consistent error handling for all API calls
 // const handleApiError = async (response: Response) => {
 //   if (!response.ok) {

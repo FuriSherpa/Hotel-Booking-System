@@ -4,10 +4,17 @@ import {
   BookingType,
   HotelSearchResponse,
   BookingStatus,
+  RoomAvailability,
+  HotelType,
 } from "../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
+import {
+  checkRoomAvailability,
+  updateRoomAvailability,
+  getDatesInRange,
+} from "../utils/roomUtils";
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 
@@ -139,31 +146,49 @@ router.post(
       const booking = {
         ...req.body,
         userId: req.userId,
-        status: BookingStatus.CONFIRMED, // Ensure status is set
-        createdAt: new Date(),
-        updatedAt: new Date(),
       };
 
-      const hotel = await Hotel.findOneAndUpdate(
-        { _id: hotelId },
-        {
-          $push: { bookings: booking },
-        },
-        { new: true }
-      );
-
+      const hotel = await Hotel.findById(hotelId);
       if (!hotel) {
         res.status(404).json({ message: "Hotel not found" });
         return;
       }
 
-      // Return the newly created booking
-      const newBooking = hotel.bookings[hotel.bookings.length - 1];
+      // Check room availability
+      const isAvailable = await checkRoomAvailability(
+        hotel,
+        new Date(booking.checkIn),
+        new Date(booking.checkOut)
+      );
+
+      if (!isAvailable) {
+        res.status(400).json({
+          message: "No rooms available for the selected dates",
+        });
+        return;
+      }
+
+      // Update room availability
+      await updateRoomAvailability(
+        hotel,
+        new Date(booking.checkIn),
+        new Date(booking.checkOut)
+      );
+
+      // Add the booking
+      const newBooking = {
+        ...booking,
+        status: "CONFIRMED",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      hotel.bookings.push(newBooking);
+      await hotel.save();
+
       res.status(200).json({
         booking: newBooking,
-        hotel: hotel,
       });
-      return;
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Something went wrong" });
@@ -254,6 +279,51 @@ router.post(
     }
   }
 );
+
+router.get("/:hotelId/availability", async (req: Request, res: Response) => {
+  try {
+    const { checkIn, checkOut } = req.query;
+    const hotel = await Hotel.findById(req.params.hotelId);
+
+    if (!hotel) {
+      res.status(404).json({ message: "Hotel not found" });
+      return;
+    }
+
+    const isAvailable = await checkRoomAvailability(
+      hotel,
+      new Date(checkIn as string),
+      new Date(checkOut as string)
+    );
+
+    const dates = getDatesInRange(
+      new Date(checkIn as string),
+      new Date(checkOut as string)
+    );
+
+    const availabilityByDate = dates.map((date) => {
+      const dateStr = date.toISOString().split("T")[0];
+      const availability = hotel.roomAvailability.find(
+        (r) => r.date === dateStr
+      );
+      return {
+        date: dateStr,
+        availableRooms: availability
+          ? availability.availableRooms
+          : hotel.totalRooms,
+      };
+    });
+
+    res.json({
+      available: isAvailable,
+      availabilityByDate,
+      totalRooms: hotel.totalRooms,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
 
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};

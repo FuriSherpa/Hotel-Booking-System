@@ -13,6 +13,20 @@ export type UserType = {
   deactivationReason?: string;
 };
 
+export interface RoomAvailabilityResponse {
+  available: boolean;
+  availabilityByDate: Array<{
+    date: string;
+    availableRooms: number;
+  }>;
+  totalRooms: number;
+}
+
+export interface RoomAvailability {
+  date: string;
+  availableRooms: number;
+}
+
 export type HotelType = {
   _id: string;
   userId: string;
@@ -30,6 +44,8 @@ export type HotelType = {
   bookings: BookingType[];
   reviews: ReviewType[];
   averageRating: number;
+  totalRooms: number;
+  roomAvailability: RoomAvailability[];
 };
 
 export type BookingType = {

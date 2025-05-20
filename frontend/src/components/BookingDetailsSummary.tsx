@@ -1,13 +1,15 @@
 import { HotelType } from "../../../backend/src/shared/types";
+import { RoomAvailabilityResponse } from "../../../backend/src/shared/types";
 
-type Props = {
+interface Props {
     checkIn: Date;
     checkOut: Date;
     adultCount: number;
     childCount: number;
     numberOfNights: number;
     hotel: HotelType;
-};
+    availability: RoomAvailabilityResponse | null | undefined;
+}
 
 const BookingDetailsSummary = ({
     checkIn,
@@ -16,6 +18,7 @@ const BookingDetailsSummary = ({
     childCount,
     numberOfNights,
     hotel,
+    availability,
 }: Props) => {
     return (
         <div className="grid gap-4 rounded-lg border border-slate-300 p-5 h-fit mt-5">
@@ -45,6 +48,22 @@ const BookingDetailsSummary = ({
                     {adultCount} adults & {childCount} children
                 </div>
             </div>
+
+            {/* Add availability information if needed */}
+            {availability && (
+                <div className="border-t border-slate-300 pt-4">
+                    <p className="font-bold">Room Availability:</p>
+                    <p>{availability.totalRooms} total rooms</p>
+                    <p>
+                        {Math.min(
+                            ...availability.availabilityByDate.map(
+                                (d) => d.availableRooms
+                            )
+                        )}{" "}
+                        rooms available for your dates
+                    </p>
+                </div>
+            )}
         </div>
     );
 };

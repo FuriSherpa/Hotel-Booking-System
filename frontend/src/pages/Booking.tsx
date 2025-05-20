@@ -50,6 +50,21 @@ const Booking = () => {
         apiClient.fetchCurrentUser
     );
 
+    const { data: availability, isLoading: checkingAvailability } = useQuery(
+        ["roomAvailability", hotelId, search.checkIn, search.checkOut],
+        () =>
+            search.checkIn && search.checkOut
+                ? apiClient.checkRoomAvailability(
+                    hotelId as string,
+                    search.checkIn,
+                    search.checkOut
+                )
+                : Promise.resolve(null),
+        {
+            enabled: !!hotelId && !!search.checkIn && !!search.checkOut,
+        }
+    );
+
     if (!hotel) {
         return <></>;
     }
@@ -63,8 +78,25 @@ const Booking = () => {
                 childCount={search.childCount}
                 numberOfNights={numberOfNights}
                 hotel={hotel}
+                availability={availability}
             />
-            {currentUser && paymentIntentData && (
+
+            {checkingAvailability ? (
+                <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                    <p className="text-gray-500 mt-2">
+                        Checking room availability...
+                    </p>
+                </div>
+            ) : !availability?.available ? (
+                <div className="p-4 bg-red-50 text-red-700 rounded-md">
+                    <h3 className="font-bold mb-2">No Rooms Available</h3>
+                    <p>Sorry, there are no rooms available for your selected dates.</p>
+                    <p className="mt-2">
+                        Please try different dates or check another hotel.
+                    </p>
+                </div>
+            ) : currentUser && paymentIntentData ? (
                 <Elements
                     stripe={stripePromise}
                     options={{
@@ -76,6 +108,21 @@ const Booking = () => {
                         paymentIntent={paymentIntentData}
                     />
                 </Elements>
+            ) : null}
+
+            {availability?.available && (
+                <div className="mt-4 p-4 bg-blue-50 text-blue-700 rounded-md">
+                    <h3 className="font-bold mb-2">Room Availability</h3>
+                    <p>{availability.totalRooms} total rooms in this hotel</p>
+                    <p className="mt-2">
+                        Available rooms for your dates:{" "}
+                        {Math.min(
+                            ...availability.availabilityByDate.map(
+                                (d) => d.availableRooms
+                            )
+                        )}
+                    </p>
+                </div>
             )}
         </div>
     );

@@ -34,6 +34,17 @@ const reviewSchema = new mongoose.Schema<ReviewType>({
   createdAt: { type: Date, required: true },
 });
 
+const roomAvailabilitySchema = new mongoose.Schema({
+  date: {
+    type: String,
+    required: true,
+  },
+  availableRooms: {
+    type: Number,
+    required: true,
+  },
+});
+
 const hotelSchema = new mongoose.Schema<HotelType>({
   userId: { type: String, required: true },
   name: { type: String, required: true },
@@ -55,6 +66,12 @@ const hotelSchema = new mongoose.Schema<HotelType>({
     min: 0,
     max: 5,
   },
+  totalRooms: {
+    type: Number,
+    required: true,
+    min: 1,
+  },
+  roomAvailability: [roomAvailabilitySchema],
 });
 
 // Add middleware to calculate average rating before saving

@@ -18,6 +18,7 @@ export type HotelFormData = {
   imageUrls: string[];
   adultCount: number;
   childCount: number;
+  totalRooms: number;
 };
 
 type Props = {
@@ -28,7 +29,7 @@ type Props = {
 
 const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
   const formMethods = useForm<HotelFormData>();
-  const { handleSubmit, reset } = formMethods;
+  const { handleSubmit, reset, register, formState: { errors } } = formMethods;
 
   useEffect(() => {
     reset(hotel);
@@ -47,6 +48,7 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
     formData.append("starRating", FormDataJson.starRating.toString());
     formData.append("adultCount", FormDataJson.adultCount.toString());
     formData.append("childCount", FormDataJson.childCount.toString());
+    formData.append("totalRooms", FormDataJson.totalRooms.toString());
 
     FormDataJson.facilities.forEach((facility, index) => {
       formData.append(`facilities[${index}]`, facility);
@@ -72,11 +74,32 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
         <FacilitiesSection />
         <GuestsSection />
         <ImagesSection />
+        <div className="flex flex-col gap-2">
+          <label htmlFor="totalRooms" className="text-gray-700 font-bold">
+            Total Rooms
+          </label>
+          <input
+            type="number"
+            className="border rounded w-full py-2 px-3"
+            min={1}
+            {...register("totalRooms", {
+              required: "Total rooms is required",
+              min: {
+                value: 1,
+                message: "Hotel must have at least 1 room",
+              },
+            })}
+          />
+          {errors.totalRooms && (
+            <span className="text-red-500">{errors.totalRooms.message}</span>
+          )}
+        </div>
         <span className="flex justify-end">
           <button
             disabled={isLoading}
             type="submit"
-            className="bg-blue-600 text-white p-2 font-bold cursor-pointer hover:bg-blue-500 text-xl disabled:bg-gray-500">
+            className="bg-blue-600 text-white p-2 font-bold cursor-pointer hover:bg-blue-500 text-xl disabled:bg-gray-500"
+          >
             {isLoading ? "Saving..." : "Save"}
           </button>
         </span>
@@ -85,4 +108,4 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
   );
 };
 
-export default ManageHotelForm
+export default ManageHotelForm;
