@@ -81,7 +81,7 @@ const Header = () => {
               to='/sign-in'
               className='flex items-center text-[#E6F4F1] px-4 py-2 font-bold rounded-lg 
                 hover:bg-[#FF7F50] transition-all duration-300 
-                border-2 border-transparent hover:border-white'
+                border-2 border-transparent hover:border-white cursor-pointer'
             >
               <FaSignInAlt className="text-xl mr-2" />
               Login / Signup

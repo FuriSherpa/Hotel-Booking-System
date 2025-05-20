@@ -21,7 +21,7 @@ const ProfileMenu = () => {
         <div className="relative" ref={menuRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center text-white px-3 font-bold hover:text-[#FF7F50] focus:outline-none"
+                className="flex items-center text-white px-3 font-bold hover:text-[#FF7F50] focus:outline-none cursor-pointer"
             >
                 <FaUserCircle className="text-2xl mr-2" />
                 Profile

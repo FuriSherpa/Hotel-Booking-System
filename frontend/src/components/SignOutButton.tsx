@@ -52,7 +52,7 @@ const SignOutButton = () => {
         <div className="relative">
             <button
                 onClick={handleSignOut}
-                className="flex items-center text-white px-3 font-bold hover:text-[#FF7F50] transition-colors"
+                className="flex items-center text-white px-3 font-bold hover:text-[#FF7F50] transition-colors cursor-pointer"
             >
                 <FaSignOutAlt className="text-xl mr-2" />
                 Sign Out
@@ -73,13 +73,13 @@ const SignOutButton = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={cancelSignOut}
-                                className="px-3 py-1.5 text-gray-600 hover:text-gray-800 font-medium"
+                                className="px-3 py-1.5 text-gray-600 hover:text-gray-800 font-medium cursor-pointer"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmSignOut}
-                                className="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 font-medium"
+                                className="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 font-medium cursor-pointer"
                             >
                                 Sign Out
                             </button>
