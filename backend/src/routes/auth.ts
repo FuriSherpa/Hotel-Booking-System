@@ -31,6 +31,15 @@ router.post(
         return;
       }
 
+      if (!user.isActive) {
+        res.status(403).json({
+          message:
+            "This account has been deactivated. Please contact support for assistance.",
+          deactivationReason: user.deactivationReason,
+        });
+        return;
+      }
+
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         res.status(400).json({ message: "Invalid Credentials" });

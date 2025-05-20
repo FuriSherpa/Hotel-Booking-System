@@ -8,6 +8,9 @@ export type UserType = {
   profilePicture?: string;
   role: "admin" | "customer";
   wishlist: string[];
+  isActive: boolean;
+  deactivatedAt?: Date;
+  deactivationReason?: string;
 };
 
 export type HotelType = {

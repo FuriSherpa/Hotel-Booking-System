@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
   profilePicture: { type: String },
   role: { type: String, enum: ["admin", "customer"], default: "customer" },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hotel" }],
+  isActive: { type: Boolean, default: true },
+  deactivatedAt: { type: Date },
+  deactivationReason: { type: String },
 });
 
 userSchema.pre("save", async function (next) {

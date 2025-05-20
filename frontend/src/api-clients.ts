@@ -502,6 +502,26 @@ export const fetchUserBookings = async (userId: string) => {
   return response.json();
 };
 
+export const toggleUserStatus = async (userId: string, reason?: string) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/users/${userId}/toggle-status`,
+    {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reason }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error updating user status");
+  }
+
+  return response.json();
+};
+
 // // Add consistent error handling for all API calls
 // const handleApiError = async (response: Response) => {
 //   if (!response.ok) {

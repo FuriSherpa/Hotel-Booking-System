@@ -110,4 +110,43 @@ router.get(
   }
 );
 
+// Add this new route
+router.put(
+  "/:userId/toggle-status",
+  verifyToken,
+  verifyRole("admin"),
+  async (req: Request, res: Response) => {
+    try {
+      const { reason } = req.body;
+      const user = await User.findById(req.params.userId);
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      if (user.role === "admin") {
+        res.status(403).json({ message: "Cannot deactivate admin users" });
+        return;
+      }
+
+      user.isActive = !user.isActive;
+      if (!user.isActive) {
+        user.deactivatedAt = new Date();
+        user.deactivationReason = reason;
+      } else {
+        user.deactivatedAt = undefined;
+        user.deactivationReason = undefined;
+      }
+
+      await user.save();
+      res.json({
+        message: user.isActive ? "User activated" : "User deactivated",
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error updating user status" });
+    }
+  }
+);
+
 export default router;
