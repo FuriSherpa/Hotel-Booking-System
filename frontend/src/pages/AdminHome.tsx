@@ -3,9 +3,32 @@ import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import * as apiClient from '../api-clients';
 import { FaChartLine, FaBook, FaHotel, FaUsers, FaMoneyBill } from 'react-icons/fa';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+} from 'chart.js';
 import { Line, Bar } from "react-chartjs-2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+// Register ChartJS components
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 const AdminHome = () => {
     const [startDate, setStartDate] = useState<Date>(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
@@ -133,34 +156,60 @@ const AdminHome = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white p-6 rounded-xl shadow-lg">
                     <h2 className="text-xl font-bold mb-4">Booking Trends</h2>
-                    <Line data={bookingsChartData} options={{
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top' as const,
+                    <Line 
+                        data={bookingsChartData} 
+                        options={{
+                            responsive: true,
+                            scales: {
+                                x: {
+                                    type: 'category',
+                                    display: true
+                                },
+                                y: {
+                                    type: 'linear',
+                                    display: true
+                                }
                             },
-                            title: {
-                                display: true,
-                                text: 'Daily Booking Trends'
+                            plugins: {
+                                legend: {
+                                    position: 'top' as const,
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Daily Booking Trends'
+                                },
                             },
-                        },
-                    }} />
+                        }} 
+                    />
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-lg">
                     <h2 className="text-xl font-bold mb-4">Top Performing Hotels</h2>
-                    <Bar data={revenueChartData} options={{
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top' as const,
+                    <Bar 
+                        data={revenueChartData} 
+                        options={{
+                            responsive: true,
+                            scales: {
+                                x: {
+                                    type: 'category',
+                                    display: true
+                                },
+                                y: {
+                                    type: 'linear',
+                                    display: true
+                                }
                             },
-                            title: {
-                                display: true,
-                                text: 'Revenue by Hotel'
+                            plugins: {
+                                legend: {
+                                    position: 'top' as const,
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Revenue by Hotel'
+                                },
                             },
-                        },
-                    }} />
+                        }} 
+                    />
                 </div>
             </div>
 
