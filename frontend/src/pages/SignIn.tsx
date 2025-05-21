@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from '../api-clients';
 import { useAppContext } from "../context/AppContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export type SignInFormData = {
     email: string;
@@ -13,10 +14,10 @@ const SignIn = () => {
     const queryClient = useQueryClient();
     const { showToast } = useAppContext();
     const navigate = useNavigate();
-
     const location = useLocation();
+    const [showPassword, setShowPassword] = useState(false);
 
-    const { register, formState: { errors }, handleSubmit } = useForm<SignInFormData>();
+    const { register, formState: { errors, isSubmitting }, handleSubmit } = useForm<SignInFormData>();
 
     const mutation = useMutation(apiClient.signIn, {
         onSuccess: async () => {
@@ -30,59 +31,93 @@ const SignIn = () => {
 
     const onSubmit = handleSubmit((data) => {
         mutation.mutate(data);
-    })
+    });
 
     return (
-        <form className="flex flex-col gap-5" onSubmit={onSubmit}>
-            <h2 className="text-3xl font-bold">Sign In</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+                <form className="flex flex-col gap-5" onSubmit={onSubmit}>
+                    <div className="text-center">
+                        <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
+                        <p className="mt-2 text-sm text-gray-600">Please sign in to your account</p>
+                    </div>
 
-            <label className="text-gray-700 text-sm font-bold flex-1">
-                Email
-                <input
-                    type="email"
-                    className="border rounded w-full py-1 px-2 font-normal"
-                    {...register("email", { required: "This field is required." })}
-                ></input>
-                {errors.email && (
-                    <span className="text-red-500">
-                        {errors.email.message}
-                    </span>
-                )}
-            </label>
-            <label className="text-gray-700 text-sm font-bold flex-1">
-                Password
-                <input
-                    type="password"
-                    className="border rounded w-full py-1 px-2 font-normal"
-                    {...register("password", {
-                        required: "This field is required.",
-                        minLength: {
-                            value: 8,
-                            message: "Password must be at least 8 characters long."
-                        },
-                    })}
-                ></input>
-                {errors.password && (
-                    <span className="text-red-500">
-                        {errors.password.message}
-                    </span>
-                )}
-            </label>
-            <span className="flex items-center justify-between">
-                <span className="text-sm">
-                    Not Registered?{" "}
-                    <Link className="underline" to="/register">
-                        Create an account here
-                    </Link>
-                </span>
+                    <div className="space-y-4">
+                        <label className="text-gray-700 text-sm font-bold block">
+                            Email
+                            <div className="mt-1">
+                                <input
+                                    type="email"
+                                    className="border rounded w-full py-2 px-3 font-normal focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                                    placeholder="your@email.com"
+                                    {...register("email", {
+                                        required: "This field is required.",
+                                        pattern: {
+                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            message: "Invalid email address"
+                                        }
+                                    })}
+                                />
+                                {errors.email && (
+                                    <span className="text-red-500 text-xs mt-1">
+                                        {errors.email.message}
+                                    </span>
+                                )}
+                            </div>
+                        </label>
 
-                <button
-                    type="submit"
-                    className="cursor-pointer bg-green-600 text-white p-2 font-bold hover: bg-green-500 text-xl">LogIn
-                </button>
-            </span>
-        </form>
-    )
-}
+                        <label className="text-gray-700 text-sm font-bold block">
+                            Password
+                            <div className="mt-1 relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    className="border rounded w-full py-2 px-3 font-normal focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                                    placeholder="********"
+                                    {...register("password", {
+                                        required: "This field is required.",
+                                        minLength: {
+                                            value: 8,
+                                            message: "Password must be at least 8 characters long."
+                                        },
+                                    })}
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm text-gray-600"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? "Hide" : "Show"}
+                                </button>
+                                {errors.password && (
+                                    <span className="text-red-500 text-xs mt-1">
+                                        {errors.password.message}
+                                    </span>
+                                )}
+                            </div>
+                        </label>
+                    </div>
 
-export default SignIn
+                    <div className="flex items-center justify-between mt-4">
+                        <span className="text-sm text-gray-600">
+                            Not Registered?{" "}
+                            <Link className="text-green-600 hover:text-green-500 font-medium" to="/register">
+                                Create an account
+                            </Link>
+                        </span>
+
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-500 
+                                     transition-colors disabled:bg-green-300 disabled:cursor-not-allowed"
+                        >
+                            {isSubmitting ? "Signing in..." : "Sign In"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default SignIn;
