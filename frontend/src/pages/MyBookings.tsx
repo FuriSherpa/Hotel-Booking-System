@@ -126,7 +126,7 @@ const MyBookings = () => {
                             className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-200 
                                 ${activeTab === tab.status
                                     ? "bg-blue-500 text-white shadow-md transform scale-105"
-                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                    : "cursor-pointer bg-gray-100 text-gray-600 hover:bg-gray-200"
                                 }`}
                         >
                             <span>{tab.icon}</span>
@@ -231,7 +231,7 @@ const MyBookings = () => {
                                                         ...prev,
                                                         [hotel._id]: !prev[hotel._id]
                                                     }))}
-                                                    className="text-blue-500 hover:text-blue-600 text-sm font-medium"
+                                                    className="cursor-pointer text-blue-500 hover:text-blue-600 text-sm font-medium"
                                                 >
                                                     {showAllBookings[hotel._id] ? 'Show Less' : `View All (${hotel.bookings.length})`}
                                                 </button>
