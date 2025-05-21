@@ -171,7 +171,6 @@ const App = () => {
           }
         />
 
-        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Toaster
         position="top-center"
