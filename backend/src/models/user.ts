@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   deactivatedAt: { type: Date },
   deactivationReason: { type: String },
+  // Add these new fields
+  isEmailVerified: { type: Boolean, default: false },
+  emailVerificationOTP: { type: String },
+  emailVerificationOTPExpires: { type: Date },
 });
 
 userSchema.pre("save", async function (next) {

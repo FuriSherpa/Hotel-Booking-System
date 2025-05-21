@@ -4,6 +4,7 @@ import User from "../models/user";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import verifyToken from "../middleware/auth";
+import { verifyEmailExists } from "../utils/emailService";
 
 const router = express.Router();
 
@@ -97,6 +98,71 @@ router.post("/logout", (req: Request, res: Response): void => {
     expires: new Date(0),
   });
   res.send();
+});
+
+router.post("/register", async (req: Request, res: Response) => {
+  try {
+    const { email, password, firstName, lastName } = req.body;
+
+    // Verify email first
+    try {
+      await verifyEmailExists(email);
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error?.message || "Email verification failed",
+      });
+      return;
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+      return;
+    }
+
+    // Hash password and create user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+    });
+
+    await user.save();
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET_KEY as string,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    // Set auth cookie
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 86400000,
+    });
+
+    // Return EXACTLY the same response format as login
+    res.status(200).json({
+      userId: user._id,
+      role: user.role,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "Internal server error",
+    });
+  }
 });
 
 export default router;

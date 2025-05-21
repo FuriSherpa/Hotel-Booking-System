@@ -10,6 +10,7 @@ import {
   BookingStatus,
 } from "../../backend/src/shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
+import { RegisterResponse } from "./types/types";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:7000";
 
@@ -23,21 +24,23 @@ export const fetchCurrentUser = async (): Promise<UserType> => {
   return response.json();
 };
 
-export const register = async (formData: RegisterFormData) => {
+export const register = async (
+  formData: RegisterFormData
+): Promise<RegisterResponse> => {
   const response = await fetch(`${API_BASE_URL}/api/users/register`, {
     method: "POST",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(formData),
   });
 
-  const responseBody = await response.json();
-
   if (!response.ok) {
-    throw new Error(responseBody.message);
+    const body = await response.json();
+    throw new Error(body.message);
   }
+
+  return response.json();
 };
 
 export const signIn = async (formData: SignInFormData) => {
@@ -569,6 +572,29 @@ export const updateBookingStatus = async (
 
   if (!response.ok) {
     throw new Error("Failed to update booking status");
+  }
+
+  return response.json();
+};
+
+export const verifyEmail = async ({
+  userId,
+  otp,
+}: {
+  userId: string;
+  otp: string;
+}) => {
+  const response = await fetch(`${API_BASE_URL}/api/users/verify-email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, otp }),
+  });
+
+  if (!response.ok) {
+    const body = await response.json();
+    throw new Error(body.message);
   }
 
   return response.json();

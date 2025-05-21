@@ -3,6 +3,9 @@ import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from '../api-clients'
 import { useAppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import EmailVerification from "../components/EmailVerification";
+import { RegisterResponse } from '../types/types';
 
 export type RegisterFormData = {
     firstName: string;
@@ -13,27 +16,32 @@ export type RegisterFormData = {
 }
 
 const Register = () => {
+    const [userId, setUserId] = useState<string | null>(null);
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { showToast } = useAppContext();
     const { register, watch, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
 
-    const mutation = useMutation(apiClient.register, {
-        onSuccess: async () => {
-            showToast({ message: "SignUp Success", type: 'success' });
-            await queryClient.invalidateQueries("validateToken")
-            navigate('/');
+    const mutation = useMutation<RegisterResponse, Error, RegisterFormData>(apiClient.register, {
+        onSuccess: (data) => {
+            showToast({
+                message: "Registration successful. Please check your email for verification code.",
+                type: "success"
+            });
+            setUserId(data.userId);
         },
         onError: (error: Error) => {
-            showToast({ message: error.message, type: 'error' });
+            showToast({ message: error.message, type: "error" });
         }
-    })
+    });
 
     const onSubmit = handleSubmit((data) => {
         mutation.mutate(data);
     });
 
-    return (
+    return userId ? (
+        <EmailVerification userId={userId} />
+    ) : (
         <form className="flex flex-col gap-5" onSubmit={onSubmit}>
             <h2 className="text-3xl font-bold">
                 Create an Account
@@ -128,4 +136,4 @@ const Register = () => {
         </form >
     );
 };
-export default Register
+export default Register;

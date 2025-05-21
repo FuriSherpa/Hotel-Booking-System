@@ -1,4 +1,4 @@
-export type UserType = {
+export interface UserType {
   _id: string;
   email: string;
   password: string;
@@ -7,11 +7,14 @@ export type UserType = {
   phoneNumber?: string;
   profilePicture?: string;
   role: "admin" | "customer";
-  wishlist: string[];
+  wishlist?: string[];
   isActive: boolean;
   deactivatedAt?: Date;
   deactivationReason?: string;
-};
+  isEmailVerified: boolean;
+  emailVerificationOTP?: string;
+  emailVerificationOTPExpires?: Date;
+}
 
 export interface RoomAvailabilityResponse {
   available: boolean;
