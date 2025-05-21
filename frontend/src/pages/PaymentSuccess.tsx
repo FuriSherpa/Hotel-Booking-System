@@ -28,6 +28,11 @@ const PaymentSuccess = () => {
         (1000 * 60 * 60 * 24)
     );
 
+    const downloadInvoice = (booking: BookingType, hotel: HotelType) => {
+        // Implement the invoice downloading logic here
+        console.log('Downloading invoice for', booking, hotel);
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
@@ -74,6 +79,21 @@ const PaymentSuccess = () => {
                     >
                         Back to Home
                     </button>
+
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => navigate('/my-bookings')}
+                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500 transition-colors mt-6"
+                        >
+                            View Booking
+                        </button>
+                        <button
+                            onClick={() => downloadInvoice(booking, hotel)}
+                            className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-500 transition-colors mt-6"
+                        >
+                            Download Invoice
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

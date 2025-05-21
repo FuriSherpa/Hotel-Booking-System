@@ -4,6 +4,7 @@ import * as apiClient from "../api-clients";
 import CancelBookingButton from "../components/CancelBookingButton";
 import { getDisplayStatus, getStatusBadgeClass } from "../utils/bookingUtils";
 import { BookingStatus } from "../../../backend/src/shared/types";
+import { downloadInvoice } from "../utils/invoiceUtils";
 
 const MyBookings = () => {
     const [activeTab, setActiveTab] = useState<BookingStatus>(BookingStatus.CONFIRMED);
@@ -305,6 +306,20 @@ const MyBookings = () => {
                                                             <div className="mt-4 bg-gray-50 p-3 rounded-lg text-sm text-gray-600">
                                                                 <span className="font-medium">Cancellation Reason: </span>
                                                                 {booking.cancellationReason}
+                                                            </div>
+                                                        )}
+
+                                                    {/* Download Invoice Button */}
+                                                    {(booking.status === BookingStatus.CONFIRMED ||
+                                                        booking.status === BookingStatus.COMPLETED ||
+                                                        booking.status === BookingStatus.REFUNDED) && (
+                                                            <div className="mt-4">
+                                                                <button
+                                                                    onClick={() => downloadInvoice(booking, hotel)}
+                                                                    className="cursor-pointer flex items-center gap-2 text-blue-600 hover:text-blue-800"
+                                                                >
+                                                                    <span>📄</span> Download Invoice
+                                                                </button>
                                                             </div>
                                                         )}
                                                 </div>

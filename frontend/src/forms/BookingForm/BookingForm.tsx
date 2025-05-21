@@ -47,7 +47,7 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
         {
             onSuccess: (data) => {
                 showToast({ message: "Booking Saved!", type: "success" });
-                navigate('/payment-success', {
+                navigate("/payment-success", {
                     state: {
                         booking: data.booking,
                         hotel: data.hotel
