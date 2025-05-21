@@ -1,5 +1,4 @@
 import {
-  Navigate,
   Route,
   BrowserRouter as Router,
   Routes,
@@ -17,7 +16,6 @@ import Detail from "./pages/Detail";
 import Booking from "./pages/Booking";
 import MyBookings from "./pages/MyBookings";
 import Home from "./pages/Home";
-import AdminDashboard from "./pages/AdminDashboard";
 import AdminBookings from "./pages/AdminBooking";
 import Wishlist from "./pages/Wishlist";
 import PaymentSuccess from "./pages/PaymentSuccess";
@@ -129,14 +127,6 @@ const App = () => {
 
         {isLoggedIn && userRole === "admin" && (
           <>
-            <Route
-              path="/admin/dashboard"
-              element={
-                <Layout1>
-                  <AdminDashboard />
-                </Layout1>
-              }
-            />
             <Route
               path="/admin/bookings"
               element={
