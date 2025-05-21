@@ -17,7 +17,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: Props
                 <div className="flex justify-end gap-3">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none"
+                        className="px-4 py-2 text-sm font-medium cursor-pointer text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none"
                     >
                         Cancel
                     </button>
@@ -26,7 +26,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }: Props
                             onConfirm();
                             onClose();
                         }}
-                        className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none"
+                        className="px-4 py-2 text-sm font-medium cursor-pointer text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none"
                     >
                         Delete
                     </button>

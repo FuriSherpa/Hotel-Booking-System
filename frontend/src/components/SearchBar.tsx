@@ -33,8 +33,21 @@ const SearchBar = () => {
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        search.saveSearchValues(destination, checkIn, checkOut, adultCount, childCount, search.hotelId);
-        navigate("/search");
+        event.stopPropagation();
+
+        search.saveSearchValues(
+            destination,
+            checkIn,
+            checkOut,
+            adultCount,
+            childCount,
+            search.hotelId
+        );
+
+        // Use setTimeout to ensure state updates are processed
+        setTimeout(() => {
+            navigate("/search");
+        }, 0);
     };
 
     const handleClear = () => {
@@ -60,7 +73,10 @@ const SearchBar = () => {
 
     return (
         <form
-            onSubmit={handleSubmit}
+            onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(e);
+            }}
             className="-m-8 p-3 bg-teal-400 rounded shadow-md grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 items-center gap-4">
             <div className="flex flex-row flex-1 items-center bg-white p-2 rounded">
                 <MdTravelExplore size={25} className="mr-2" />
@@ -130,15 +146,24 @@ const SearchBar = () => {
             <div className="flex gap-1">
                 <button
                     type="submit"
-                    className="w-2/3 bg-blue-600 text-white h-full p-1.5 font-bold text-xl hover:bg-blue-500 rounded cursor-pointer">
+                    onClick={(e) => {
+                        e.preventDefault();
+                        handleSubmit(e);
+                    }}
+                    className="w-2/3 bg-blue-600 text-white h-full p-1.5 font-bold text-xl hover:bg-blue-500 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
                     Search
                 </button>
                 <button
                     type="button"
                     disabled={isFormEmpty}
-                    onClick={handleClear}
-                    className={`w-1/3 bg-red-600 text-white h-full p-1.5 font-bold text-xl rounded cursor-pointer ${isFormEmpty ? "opacity-50 cursor-not-allowed" : "hover:bg-red-500"
-                        }`}>
+                    onClick={(e) => {
+                        e.preventDefault();
+                        handleClear();
+                    }}
+                    className={`w-1/3 bg-red-600 text-white h-full p-1.5 font-bold text-xl rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-400 ${isFormEmpty ? "opacity-50 cursor-not-allowed" : "hover:bg-red-500"
+                        }`}
+                >
                     Clear
                 </button>
             </div>

@@ -146,7 +146,7 @@ const ChangePassword = () => {
                     <button
                         type="submit"
                         disabled={mutation.isLoading}
-                        className="w-full mt-8 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold
+                        className="w-full mt-8 bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer font-semibold
                         hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 
                         disabled:bg-gray-300 disabled:cursor-not-allowed
                         transition-all duration-200 transform hover:scale-[1.02]"

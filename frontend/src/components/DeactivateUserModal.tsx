@@ -41,7 +41,7 @@ const DeactivateUserModal = ({ isOpen, onClose, onConfirm, isActive, userName }:
                 <div className="flex justify-end gap-4">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:bg-gray-50"
+                        className="px-4 py-2 cursor-pointer text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:bg-gray-50"
                     >
                         Cancel
                     </button>
@@ -51,9 +51,9 @@ const DeactivateUserModal = ({ isOpen, onClose, onConfirm, isActive, userName }:
                             setReason('');
                         }}
                         disabled={isActive && !reason.trim()}
-                        className={`px-4 py-2 rounded text-white ${isActive
-                                ? 'bg-red-500 hover:bg-red-600 disabled:bg-red-300'
-                                : 'bg-green-500 hover:bg-green-600'
+                        className={`px-4 py-2 cursor-pointer rounded text-white ${isActive
+                            ? 'bg-red-500 hover:bg-red-600 disabled:bg-red-300'
+                            : 'bg-green-500 hover:bg-green-600'
                             } disabled:cursor-not-allowed`}
                     >
                         {isActive ? 'Deactivate' : 'Activate'}

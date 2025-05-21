@@ -222,7 +222,7 @@ const AdminUsers = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleDetailsClick(user)}
-                                            className="text-blue-600 hover:text-blue-900 mr-4 transition-colors duration-200"
+                                            className="cursor-pointer text-blue-600 hover:text-blue-900 mr-4 transition-colors duration-200"
                                         >
                                             <FaInfoCircle className="inline-block mr-1" /> Details
                                         </button>
@@ -230,15 +230,15 @@ const AdminUsers = () => {
                                             <>
                                                 <button
                                                     onClick={() => handleDeleteClick(user)}
-                                                    className="text-red-600 hover:text-red-900 transition-colors duration-200"
+                                                    className="cursor-pointer text-red-600 hover:text-red-900 transition-colors duration-200"
                                                 >
                                                     <FaTrash className="inline-block mr-1" /> Delete
                                                 </button>
                                                 <button
                                                     onClick={() => handleToggleStatus(user)}
                                                     className={`${user.isActive
-                                                        ? 'text-orange-600 hover:text-orange-900'
-                                                        : 'text-green-600 hover:text-green-900'
+                                                        ? 'cursor-pointer text-orange-600 hover:text-orange-900'
+                                                        : 'cursor-pointer text-green-600 hover:text-green-900'
                                                         } ml-4 transition-colors duration-200`}
                                                 >
                                                     <FaUserSlash className="inline-block mr-1" />

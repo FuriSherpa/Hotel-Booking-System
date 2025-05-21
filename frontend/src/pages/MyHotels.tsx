@@ -133,7 +133,7 @@ const MyHotels = () => {
                                 <button
                                     onClick={() => handleDeleteClick(hotel._id, hotel.name)}
                                     disabled={deletingHotelId === hotel._id}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
+                                    className={`flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg transition-colors
                                         ${deletingHotelId === hotel._id
                                             ? 'bg-red-100 text-red-300 cursor-not-allowed'
                                             : 'bg-red-50 text-red-600 hover:bg-red-100'}`}>

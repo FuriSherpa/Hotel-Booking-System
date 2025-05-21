@@ -128,7 +128,7 @@ const Profile = () => {
                         <button
                             type="submit"
                             disabled={!isDirty || mutation.isLoading}
-                            className="bg-blue-600 text-white px-6 py-2.5 font-semibold rounded-lg hover:bg-blue-500 
+                            className="cursor-pointer bg-blue-600 text-white px-6 py-2.5 font-semibold rounded-lg hover:bg-blue-500 
                             disabled:bg-gray-300 disabled:cursor-not-allowed transform hover:scale-[1.02] 
                             transition-all duration-200 flex items-center gap-2"
                         >

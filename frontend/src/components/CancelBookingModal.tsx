@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api-clients";
-import { BookingType } from "../../../backend/src/shared/types";
 
 interface Props {
     hotelId: string;
@@ -39,8 +38,8 @@ const CancelBookingModal = ({ hotelId, bookingId, isOpen, onClose }: Props) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded-lg max-w-md w-full">
+        <div className="fixed inset-0 bg-gray-500/75 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg max-w-md w-full shadow-lg transform transition-all">
                 <h2 className="text-xl font-bold mb-4">Cancel Booking</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -50,7 +49,7 @@ const CancelBookingModal = ({ hotelId, bookingId, isOpen, onClose }: Props) => {
                         <textarea
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
-                            className="w-full border rounded-md p-2 min-h-[100px]"
+                            className="w-full border rounded-md p-2 min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             required
                         />
                     </div>
@@ -58,14 +57,14 @@ const CancelBookingModal = ({ hotelId, bookingId, isOpen, onClose }: Props) => {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                            className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={mutation.isLoading || !reason.trim()}
-                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400"
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
                             {mutation.isLoading ? "Cancelling..." : "Confirm Cancellation"}
                         </button>

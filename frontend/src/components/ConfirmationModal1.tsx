@@ -27,7 +27,7 @@ const ConfirmationModal: React.FC<Props> = ({
                 <div className="flex justify-end gap-4">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded cursor-pointer hover:bg-gray-300 transition-colors"
                     >
                         Cancel
                     </button>
@@ -36,7 +36,7 @@ const ConfirmationModal: React.FC<Props> = ({
                             onConfirm();
                             onClose();
                         }}
-                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                        className="px-4 py-2 bg-red-600 text-white cursor-pointer rounded hover:bg-red-700 transition-colors"
                     >
                         {confirmText}
                     </button>

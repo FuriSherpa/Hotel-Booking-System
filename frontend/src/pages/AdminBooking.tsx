@@ -252,7 +252,7 @@ const AdminBookings: React.FC = () => {
                 {selectedHotel && (
                     <button
                         onClick={() => setSelectedHotel(null)}
-                        className="flex items-center gap-2 bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200"
+                        className="flex items-center gap-2 cursor-pointer bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200"
                     >
                         ← Back to Hotels
                     </button>
@@ -479,7 +479,7 @@ const AdminBookings: React.FC = () => {
                                                                     BookingStatus.REFUND_PENDING,
                                                                     'cancel'
                                                                 )}
-                                                                className="text-red-600 hover:text-red-900 transition-colors duration-200"
+                                                                className="cursor-pointer text-red-600 hover:text-red-900 transition-colors duration-200"
                                                             >
                                                                 Cancel
                                                             </button>
@@ -492,7 +492,7 @@ const AdminBookings: React.FC = () => {
                                                                     BookingStatus.REFUNDED,
                                                                     'refund'
                                                                 )}
-                                                                className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                                                                className="cursor-pointer text-blue-600 hover:text-blue-900 transition-colors duration-200"
                                                             >
                                                                 Refund
                                                             </button>

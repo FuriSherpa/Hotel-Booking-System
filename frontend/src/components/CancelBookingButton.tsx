@@ -70,8 +70,8 @@ const CancelBookingButton = ({ booking, hotelId }: Props) => {
             </button>
 
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                <div className="fixed inset-0 bg-gray-500/50 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg max-w-md w-full shadow-xl transform transition-all">
                         <h3 className="text-xl font-semibold mb-4">Cancel Booking</h3>
                         <p className="mb-4">Are you sure you want to cancel this booking?</p>
 
@@ -79,7 +79,7 @@ const CancelBookingButton = ({ booking, hotelId }: Props) => {
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
                             placeholder="Please provide a reason for cancellation"
-                            className="w-full border rounded-md p-2 mb-4 min-h-[100px]"
+                            className="w-full border rounded-md p-2 mb-4 min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             required
                         />
 
@@ -89,7 +89,7 @@ const CancelBookingButton = ({ booking, hotelId }: Props) => {
                                     setShowModal(false);
                                     setReason("");
                                 }}
-                                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                                className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded"
                                 disabled={mutation.isLoading}
                             >
                                 Close
@@ -97,7 +97,7 @@ const CancelBookingButton = ({ booking, hotelId }: Props) => {
                             <button
                                 onClick={() => mutation.mutate()}
                                 disabled={mutation.isLoading || !reason.trim()}
-                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400"
+                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
                             >
                                 {mutation.isLoading ? "Cancelling..." : "Confirm Cancellation"}
                             </button>

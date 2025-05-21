@@ -16,7 +16,7 @@ const Pagination = ({ page, pages, onPageChange }: Props) => {
             <button
                 onClick={() => onPageChange(page - 1)}
                 disabled={page === 1}
-                className="bg-blue-600 text-white p-3 rounded-lg disabled:bg-gray-300 disabled:text-gray-600 hover:bg-blue-700 transition duration-300 ease-in-out"
+                className="bg-blue-600 text-white p-3 rounded-lg cursor-pointer disabled:bg-gray-300 disabled:text-gray-600 hover:bg-blue-700 transition duration-300 ease-in-out"
             >
                 &#8592; Previous
             </button>
@@ -28,7 +28,7 @@ const Pagination = ({ page, pages, onPageChange }: Props) => {
                         <li key={number} className="relative">
                             <button
                                 onClick={() => onPageChange(number)}
-                                className={`px-3 py-2 rounded-md text-sm font-medium 
+                                className={`px-3 py-2 rounded-md text-sm font-medium cursor-pointer
                                     ${page === number ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-blue-100'} 
                                     transition duration-200 ease-in-out`}
                             >
@@ -46,7 +46,7 @@ const Pagination = ({ page, pages, onPageChange }: Props) => {
             <button
                 onClick={() => onPageChange(page + 1)}
                 disabled={page === pages}
-                className="bg-blue-600 text-white p-3 rounded-lg disabled:bg-gray-300 disabled:text-gray-600 hover:bg-blue-700 transition duration-300 ease-in-out"
+                className="bg-blue-600 text-white p-3 rounded-lg cursor-pointer disabled:bg-gray-300 disabled:text-gray-600 hover:bg-blue-700 transition duration-300 ease-in-out"
             >
                 Next &#8594;
             </button>
