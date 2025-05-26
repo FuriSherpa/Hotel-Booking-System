@@ -25,6 +25,7 @@ import { Toaster } from 'react-hot-toast';
 import AdminHome from './pages/AdminHome';
 import AdminUsers from "./pages/AdminUsers";
 import UserDetails from './pages/UserDetails';
+import ForgotPassword from "./pages/ForgotPassword";
 
 const App = () => {
   const { isLoggedIn, userRole } = useAppContext();
@@ -72,22 +73,12 @@ const App = () => {
           }
         />
 
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
         {isLoggedIn && <>
           <Route path="/hotel/:hotelId/booking" element={
             <Layout>
               <Booking />
-            </Layout>
-          } />
-
-          <Route path="/add-hotel" element={
-            <Layout>
-              <AddHotel />
-            </Layout>
-          } />
-
-          <Route path="/edit-hotel/:hotelId" element={
-            <Layout>
-              <EditHotel />
             </Layout>
           } />
 
@@ -143,6 +134,17 @@ const App = () => {
                 </Layout1>
               }
             />
+            <Route path="/add-hotel" element={
+              <Layout1>
+                <AddHotel />
+              </Layout1>
+            } />
+
+            <Route path="/edit-hotel/:hotelId" element={
+              <Layout1>
+                <EditHotel />
+              </Layout1>
+            } />
             <Route
               path="/admin/users/:userId"
               element={

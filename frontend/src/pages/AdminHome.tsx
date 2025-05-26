@@ -102,7 +102,7 @@ const AdminHome = () => {
             </div>
 
             {/* Quick Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
                     <div className="flex items-center justify-between">
                         <div>
@@ -127,17 +127,17 @@ const AdminHome = () => {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl shadow-lg text-white">
+                {/* <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl shadow-lg text-white">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-white/80">Total Hotels</p>
+                            <p className="text-white/80">Top Hotels</p>
                             <h3 className="text-3xl font-bold mt-1">
                                 {analyticsData.topHotels.length}
                             </h3>
                         </div>
                         <FaHotel className="text-4xl opacity-80" />
                     </div>
-                </div>
+                </div> */}
 
                 <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl shadow-lg text-white">
                     <div className="flex items-center justify-between">
@@ -156,8 +156,8 @@ const AdminHome = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white p-6 rounded-xl shadow-lg">
                     <h2 className="text-xl font-bold mb-4">Booking Trends</h2>
-                    <Line 
-                        data={bookingsChartData} 
+                    <Line
+                        data={bookingsChartData}
                         options={{
                             responsive: true,
                             scales: {
@@ -179,14 +179,14 @@ const AdminHome = () => {
                                     text: 'Daily Booking Trends'
                                 },
                             },
-                        }} 
+                        }}
                     />
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-lg">
                     <h2 className="text-xl font-bold mb-4">Top Performing Hotels</h2>
-                    <Bar 
-                        data={revenueChartData} 
+                    <Bar
+                        data={revenueChartData}
                         options={{
                             responsive: true,
                             scales: {
@@ -208,7 +208,7 @@ const AdminHome = () => {
                                     text: 'Revenue by Hotel'
                                 },
                             },
-                        }} 
+                        }}
                     />
                 </div>
             </div>

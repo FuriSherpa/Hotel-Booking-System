@@ -600,6 +600,62 @@ export const verifyEmail = async ({
   return response.json();
 };
 
+export const forgotPassword = async (email: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+  return data;
+};
+
+export const resetPassword = async ({
+  userId,
+  otp,
+  newPassword,
+}: {
+  userId: string;
+  otp: string;
+  newPassword: string;
+}) => {
+  const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, otp, newPassword }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+  return data;
+};
+
+export const verifyResetOTP = async ({
+  userId,
+  otp,
+}: {
+  userId: string;
+  otp: string;
+}) => {
+  const response = await fetch(`${API_BASE_URL}/api/auth/verify-reset-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, otp }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+  return data;
+};
+
 // // Add consistent error handling for all API calls
 // const handleApiError = async (response: Response) => {
 //   if (!response.ok) {

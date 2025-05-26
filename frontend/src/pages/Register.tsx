@@ -27,7 +27,7 @@ const Register = () => {
     const mutation = useMutation<RegisterResponse, Error, RegisterFormData>(apiClient.register, {
         onSuccess: (data) => {
             showToast({
-                message: "Registration successful. Please check your email for verification code.",
+                message: "Please check your email for verification code.",
                 type: "success"
             });
             setUserId(data.userId);
